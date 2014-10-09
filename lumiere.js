@@ -120,7 +120,7 @@ if (Meteor.isServer) {
   /**
    * Packages installed via meteroite and meteor-npm.
    */
-  chroma = Meteor.require('chroma-js');
+  chroma = Meteor.npmRequire('chroma-js');
 
   // On startup
   Meteor.startup(function() {
@@ -215,17 +215,19 @@ if (Meteor.isServer) {
       }
     });
   });
+}
 
+/**
+ * Routing for other parts of the application.
+ * mrt add router
+ */
 
-
-  /**
-   * Routing for other parts of the application.
-   * mrt add router
-   */
-
-  // Routing for text input.  Can test locally with something like:
-  // curl --data "Body=blue" -X POST http://localhost:3000/incoming
-  Meteor.Router.add('/incoming', 'POST', function() {
+// Routing for text input.  Can test locally with something like:
+// curl --data "Body=blue" -X POST http://localhost:3000/incoming
+Router.route('incoming', {
+  path: '/incoming',
+  where: 'server',
+  action: function() {
     // Example input from Twilio
     /*
     { AccountSid: 'XXXXXX',
@@ -255,23 +257,24 @@ if (Meteor.isServer) {
     }
 
     // Return some TwiML
-    return [
-      200,
-      { 'content-type': 'text/xml' },
-      '<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms>Thank you for your input; your color should show up in a few seconds.  - ' + Meteor.lumiere.lumiereName + '</Sms> </Response>'
-    ];
-  });
+    this.response.writeHead(200, {
+      'content-type': 'text/xml'
+    });
+    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms>Thank you for your input; your color should show up in a few seconds.  - ' + Meteor.lumiere.lumiereName + '</Sms> </Response>\n');
+  }
+});
 
-  // Routing for color api output
-  Meteor.Router.add('/outgoing', 'GET', function() {
+// Routing for color api output
+Router.route('outgoing', {
+  path: '/outgoing',
+  where: 'server',
+  action: function() {
     var color = Colors.find({}, { sort: { timestamp: -1 }}).fetch()[0];
-    return [
-      200,
-      {
-        'content-type': 'application/json',
-        'document-id': color._id
-      },
-      JSON.stringify(color)
-    ];
-  });
-}
+
+    this.response.writeHead(200, {
+      'content-type': 'application/json',
+      'document-id': color._id
+    });
+    this.response.end(JSON.stringify(color) + '\n');
+  }
+});

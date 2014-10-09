@@ -6,8 +6,11 @@
 standard-app-packages
 autopublish
 insecure
-preserve-inputs
-npm
 jquery
 underscore
-router
+iron:router
+meteorhacks:npm
+meteorhacks:fast-render
+
+
+npm-container
