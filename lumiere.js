@@ -1,28 +1,24 @@
 /**
- * Main application logic for Lumiere Meteor app.  This
- * holds the both server and client side code.
+ * Main application logic for Lumiere Meteor app.
  */
 
-
-// We will use these later
+// Place hold some variables
 var chroma;
 
-
-/**
- * Persistant data stores
- */
+// Persistant data stores
 var Colors = new Meteor.Collection('colors');
 
+// Allow a settings file to override defaults
+Meteor.settings = _.extend({
+  'name': 'Lumière',
+  'phone': '+1 651 400 1501',
+  'lights': 160
+}, Meteor.settings);
 
-/**
- * Shared objects across client and server.
- *
- * Meteor.lumiere.colors comes in from colors.js
- */
+
+// Shared objects across client and server.
+// Meteor.lumiere.colors comes in from colors.js
 Meteor.lumiere = Meteor.lumiere || {};
-Meteor.lumiere.LEDs = 32 * 5;
-Meteor.lumiere.phone = '+1 651 400 1501';
-Meteor.lumiere.lumiereName = 'Lumière';
 
 // Shared methods that should not be called async
 Meteor.lumiere.fillColor = function(color) {
@@ -31,7 +27,7 @@ Meteor.lumiere.fillColor = function(color) {
 
   if (!_.isUndefined(color) && _.isObject(color)) {
     // Repeat colors
-    for (i = 0; i < Meteor.lumiere.LEDs; i++) {
+    for (i = 0; i < Meteor.settings.lights; i++) {
       colors.push(color.colors[i % color.colors.length]);
     }
 
@@ -41,23 +37,16 @@ Meteor.lumiere.fillColor = function(color) {
 };
 
 
-
-/**
- * Client side only
- */
+// Client side only.  Multiple templates are used
+// as Meteor ends up rerendering everything when
+// one value is updated and can be very slow.
 if (Meteor.isClient) {
-
-  /**
-   * Template values.  Multiple templates are used
-   * as Meteor ends up rerendering everything when
-   * one value is updated and can be very slow.
-   */
-
   // Status allows for a simple icon to show if the client
   // is connected to the server
   Template.header.status = function() {
     return Meteor.status().status;
   };
+  Template.header.name = Meteor.settings.name;
 
   // The current selection of lights
   Template.lights.current = function() {
@@ -69,11 +58,8 @@ if (Meteor.isClient) {
     return Meteor.lumiere.fillColor(recent);
   };
 
-  // Phone saved here so that it can be managed in
-  // one place.
-  Template.about.phone = function() {
-    return Meteor.lumiere.phone;
-  };
+  // About section
+  Template.about.phone = Meteor.settings.phone;
 
   // All those colors!
   Template.input.colorList = function() {
@@ -82,6 +68,7 @@ if (Meteor.isClient) {
 
   // Events handled in the input template.
   Template.input.events({
+    // Submit new colors
     'submit .color-input-form': function(e) {
       e.preventDefault();
       var $form = $(e.currentTarget);
@@ -95,6 +82,7 @@ if (Meteor.isClient) {
         }
       });
     },
+    // Add colors to input
     'click li.color-choice': function(e) {
       e.preventDefault();
       var $color = $(e.currentTarget);
@@ -112,20 +100,15 @@ if (Meteor.isClient) {
 }
 
 
-
-/**
- * Server side only
- */
+// Server side only.  Saving and processing colors.  Mostly we are just adding
+// some methods that can be shared with the client
 if (Meteor.isServer) {
-  /**
-   * Packages installed via meteroite and meteor-npm.
-   */
+  // "npm" packages
   chroma = Meteor.npmRequire('chroma-js');
 
-  // On startup
+  // On startup, create methods
   Meteor.startup(function() {
     Meteor.methods({
-
       // Turn a string into a color
       findColor: function(input) {
         var names = _.pluck(Meteor.lumiere.colors, 'colorName');
@@ -217,15 +200,13 @@ if (Meteor.isServer) {
   });
 }
 
-/**
- * Routing for other parts of the application.
- * mrt add router
- */
+
+// "API" routing
 
 // Routing for text input.  Can test locally with something like:
-// curl --data "Body=blue" -X POST http://localhost:3000/incoming
-Router.route('incoming', {
-  path: '/incoming',
+// curl --data "Body=blue" -X POST http://localhost:3000/api/colors/twilio
+Router.route('incoming-twilio', {
+  path: '/api/colors/twilio',
   where: 'server',
   action: function() {
     // Example input from Twilio
@@ -258,22 +239,23 @@ Router.route('incoming', {
 
     // Return some TwiML
     this.response.writeHead(200, {
-      'content-type': 'text/xml'
+      'Content-Type': 'text/xml'
     });
-    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms>Thank you for your input; your color should show up in a few seconds.  - ' + Meteor.lumiere.lumiereName + '</Sms> </Response>\n');
+    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms>Thank you for your input; your color(s) should show up in a few seconds.  - ' + Meteor.settings.name + '</Sms> </Response>\n');
   }
 });
 
 // Routing for color api output
-Router.route('outgoing', {
-  path: '/outgoing',
+Router.route('outgoing-colors', {
+  path: '/api/colors',
   where: 'server',
   action: function() {
     var color = Colors.find({}, { sort: { timestamp: -1 }}).fetch()[0];
 
     this.response.writeHead(200, {
-      'content-type': 'application/json',
-      'document-id': color._id
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Document-ID': color._id
     });
     this.response.end(JSON.stringify(color) + '\n');
   }

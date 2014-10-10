@@ -10,20 +10,25 @@ Live server at at [lumiere.lighting](http://lumiere.lighting).  Watch a [video o
 
 Inspiration taken from [textmas](https://github.com/emilyville/textmas).
 
-## The server
+## Server
 
 * A Meteor application is run that keeps track of what color(s) the lights should be.
 * Provides a web interface for choosing colors and basic representation of current colors.
-* Accepts input via SMS.
-* Provides basic API for retrieving colors.
+* Provides basic API for retrieving colors as well as setting colors with SMS (Twilio).
 
 ## Nodes
 
-(coming soon)
+See the [node projects](https://github.com/lumiere-lighting) to get started making your own nodes.
 
 ## Deploying a new server
 
-Though these instructions are detailed, the code has not been abstracted to where configuration lives outside the code, so deploying means changing (just a few) values in code.
+### Install locally
+
+The application is a [Meteor](http://www.meteor.com/) application.
+
+1. Install Meteor: `curl https://install.meteor.com | /bin/sh`
+1. Get the code: `git clone https://github.com/lumiere-lighting/lumiere-server.git`
+1. To run locally, run the following from inside the code directory: `meteor`
 
 ### Set up SMS phone number
 
@@ -31,17 +36,20 @@ These instructions are for using Twilio, but it would not be too hard to change 
 
 1. Create an account at Twilio.
 1. Obtain a [phone number](https://www.twilio.com/user/account/phone-numbers) or use an existing one if you already have one set up.
-1. Under the settings for that phone number, set the Messaging POST value to `http://<YOUR_APP_NAME>.meteor.com/incoming`.
-1. There is no real set up for the web application part, but the application displays the phone number so you may want to update that.
+1. Under the settings for that phone number, set the Messaging POST value to `http://<YOUR_APP_NAME>.meteor.com/api/colors/twilio`.
 
-### Create web server
+### Settings
 
-The application is a [Meteor](http://www.meteor.com/) application, and to note, my first Meteor application.
+You can override some of the configuration by using a settings file through [Meteor](http://docs.meteor.com/#meteor_settings).  The default values are the following:
 
-1. Install Meteor: `curl https://install.meteor.com | /bin/sh`
-1. Run locally: `meteor`
+    {
+      "name": "Lumière",
+      "phone": "+1 651 400 1501",
+      "lights": 160
+    }
+
+### Deploy
+
+You can deploy to Meteors architecture for free.
+
 1. Deploy to Meteor.com: `meteor deploy <YOUR_APP_NAME>.meteor.com`
-
-### Nodes
-
-You will have to update your nodes to point at your server.
