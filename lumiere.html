@@ -25,6 +25,14 @@
     <div class="spacer"></div>
 
     {{> about}}
+
+    <div class="spacer"></div>
+
+    {{> nodes}}
+
+    <div class="spacer"></div>
+
+    {{> credits}}
   </div>
 </body>
 
@@ -85,15 +93,36 @@
 </template>
 
 
-<!-- About section that could be static except some minor config stuff -->
+<!-- About section -->
 <template name="about">
   <div class="about">
     <h3>About</h3>
 
-    <p><strong>Lumière</strong> is an experiment in holiday lighting and community engagement.  Lumière invites anyone to change the colors of our external, holiday lights at our house either through this website or texting colors to <strong class="phone"><code>{{ phone }}</code></strong>.  Just wait a few seconds and the lights will be updated.</p>
+    <p><strong>{{ name }}</strong> is an experiment in holiday lighting and community engagement.  {{ name }} invites anyone to change the colors of holiday lights around the world either through this website or texting colors to <strong class="phone"><code>{{ phone }}</code></strong>.  Just wait a few seconds and the lights will be updated.</p>
+  </div>
+</template>
 
-    <p>Color words are a combination of <a href="https://github.com/gka/chroma.js/blob/master/src/colors/w3cx11.coffee" target="_blank">Chroma.js</a>, <a href="https://github.com/gka/chroma.js/blob/master/src/colors/colorbrewer.coffee" target="_blank">Colorbrewer</a>, <a href="http://chir.ag/projects/name-that-color/" target="_blank">Name that Color</a>, and some custom ones.  Feel free to <a href="https://github.com/zzolo/lumiere/issues" target="_blank">suggest</a> some more.</p>
 
-    <p>This <a href="https://github.com/zzolo/lumiere" target="_blank">project is open source</a> and you are welcome to use the code freely or help improve it.</p>
+<!-- Nodes section -->
+<template name="nodes">
+  <div class="nodes">
+    <h3>Make your own lights</h3>
+
+    <p>{{ name }} lights are currently <abbr title="Do-it-yourself">DIY</abbr>; this means you have to get a hold of some hardware, put it together yourself, and then hook it up to the {{ name }} system.  Basically you need a string of programmable lights and an internet-connected device like an Arduino or Raspberry-Pi.  It takes some technical know-how, but checkout our <a href="https://github.com/lumiere-lighting" target="_blank">repository of code and instructions</a> for different node configurations.</p>
+
+    <p>Maybe one day we will have a kit package for your to purchase or even just a full-fledged {{ name }} product.  We'll let you know if that happens.</p>
+  </div>
+</template>
+
+
+<!-- Credits section -->
+<template name="credits">
+  <div class="credits">
+
+    <h3>Credits</h3>
+
+    <p>Color words are a combination of <a href="https://github.com/gka/chroma.js/blob/master/src/colors/w3cx11.coffee" target="_blank">Chroma.js</a>, <a href="https://github.com/gka/chroma.js/blob/master/src/colors/colorbrewer.coffee" target="_blank">Colorbrewer</a>, <a href="http://chir.ag/projects/name-that-color/" target="_blank">Name that Color</a>, and some custom ones.  Feel free to <a href="https://github.com/lumiere-lighting/lumiere-server/issues" target="_blank">suggest</a> some more.</p>
+
+    <p>This <a href="https://github.com/lumiere-lighting/lumiere-server" target="_blank">project is open source</a> and you are welcome to use the code freely or help improve it.</p>
   </div>
 </template>

@@ -58,8 +58,10 @@ if (Meteor.isClient) {
     return Meteor.lumiere.fillColor(recent);
   };
 
-  // About section
+  // About sections
   Template.about.phone = Meteor.settings.phone;
+  Template.about.name = Meteor.settings.name;
+  Template.nodes.name = Meteor.settings.name;
 
   // All those colors!
   Template.input.colorList = function() {
