@@ -233,6 +233,14 @@ Router.route('incoming-twilio', {
     FromZip: '30354' }
     */
 
+    // Responses
+    var responses = [
+      'Thanks for your input; your color(s) should show up in a few seconds.',
+      'Yay! More colors! Might take a moment to update those colors for you.',
+      'Our robots are working hard to get those colors just right for you.',
+      'Wait for it... Bam! Colors!'
+    ];
+
     // Should return a TwiML document.
     // https://www.twilio.com/docs/api/twiml
     if (this.request.body && this.request.body.Body) {
@@ -243,7 +251,7 @@ Router.route('incoming-twilio', {
     this.response.writeHead(200, {
       'Content-Type': 'text/xml'
     });
-    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms>Thank you for your input; your color(s) should show up in a few seconds.  - ' + Meteor.settings.name + '</Sms> </Response>\n');
+    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + _.sample(responses) + ' -' + Meteor.settings.name + '</Sms> </Response>\n');
   }
 });
 
