@@ -260,7 +260,19 @@ Router.route('outgoing-colors', {
   path: '/api/colors',
   where: 'server',
   action: function() {
+    var thisRoute = this;
     var color = Colors.find({}, { sort: { timestamp: -1 }}).fetch()[0];
+
+    // Output rgb if wants
+    if (_.isObject(this.params) && this.params.format) {
+      color.colors = _.map(color.colors, function(c, ci) {
+        var o = chroma(c);
+        if (_.isFunction(o[thisRoute.params.format])) {
+          return o[thisRoute.params.format]();
+        }
+        return c;
+      });
+    }
 
     this.response.writeHead(200, {
       'Content-Type': 'application/json',
