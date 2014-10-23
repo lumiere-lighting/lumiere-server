@@ -263,7 +263,7 @@ Router.route('outgoing-colors', {
     var thisRoute = this;
     var color = Colors.find({}, { sort: { timestamp: -1 }}).fetch()[0];
 
-    // Output rgb if wants
+    // Output other formats such as hex, rgb, css
     if (_.isObject(this.params) && this.params.format) {
       color.colors = _.map(color.colors, function(c, ci) {
         var o = chroma(c);
@@ -274,6 +274,26 @@ Router.route('outgoing-colors', {
       });
     }
 
+    // FastLED wants to use a hex format like 0x123456 so we provide this for
+    // easier processing
+    if (_.isObject(this.params) && this.params.format === 'hex0') {
+      color.colors = _.map(color.colors, function(c, ci) {
+        return chroma(c).hex().replace('#', '0x');
+      });
+    }
+
+    // Handle limit
+    if (_.isObject(this.params) && parseInt(this.params.limit, 10) > 0) {
+      color.colors = _.first(color.colors, parseInt(this.params.limit, 10));
+    }
+
+    // Remove input, as this can help use less memory for client
+    if (_.isObject(this.params) && this.params.noInput === 'true') {
+      color.colors = undefined;
+    }
+
+
+    // Write out
     this.response.writeHead(200, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
