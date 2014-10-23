@@ -289,7 +289,7 @@ Router.route('outgoing-colors', {
 
     // Remove input, as this can help use less memory for client
     if (_.isObject(this.params) && this.params.noInput === 'true') {
-      color.colors = undefined;
+      color.input = undefined;
     }
 
 
