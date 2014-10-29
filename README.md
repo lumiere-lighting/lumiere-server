@@ -47,6 +47,9 @@ For sensitive data like autehntication tokens or to override some of the configu
       "phone": "+1 651 400 1501",
       "lights": 160,
       "twitterFilter": ["lumierebot", "lumierelights", "lumierelighting"],
+      // Note that twitter does not like multiple connections to the
+      // streaming API so it's best to have settings/twitter apps for dev and
+      // prod
       "twitterAuth": {
         "consumer_key": "xxx",
         "consumer_secret": "xxx",

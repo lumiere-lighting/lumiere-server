@@ -226,6 +226,17 @@ if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
         }
       }
     }));
+
+    // Handle error
+    stream.on('error', Meteor.bindEnvironment(function(error) {
+      if (error.source) {
+        console.error(error.source);
+      }
+      else {
+        console.error(error.stack);
+      }
+    }));
+
   });
 }
 
