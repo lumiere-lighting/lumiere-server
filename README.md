@@ -40,16 +40,26 @@ These instructions are for using Twilio, but it would not be too hard to change 
 
 ### Settings
 
-You can override some of the configuration by using a settings file through [Meteor](http://docs.meteor.com/#meteor_settings).  The default values are the following:
+For sensitive data like autehntication tokens or to override some of the configuration by, use a [Meteor settings](http://docs.meteor.com/#meteor_settings) file, which can be an arbitrary JSON file.  The default values are the following:
 
     {
       "name": "Lumière",
       "phone": "+1 651 400 1501",
-      "lights": 160
+      "lights": 160,
+      "twitterFilter": ["lumierebot", "lumierelights", "lumierelighting"],
+      "twitterAuth": {
+        "consumer_key": "xxx",
+        "consumer_secret": "xxx",
+        "access_token_key": "xxx",
+        "access_token_secret": "xxx"
+      }
     }
+
+Make sure to use `meteor --settings=settings.json` and `meteor deploy --settings=settings.json` respectively.
 
 ### Deploy
 
 You can deploy to Meteors architecture for free.
 
 1. Deploy to Meteor.com: `meteor deploy <YOUR_APP_NAME>.meteor.com`
+    * Or if you have your settings file: `meteor deploy --settings=settings.json <YOUR_APP_NAME>.meteor.com`

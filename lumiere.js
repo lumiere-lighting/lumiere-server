@@ -3,7 +3,7 @@
  */
 
 // Place hold some variables
-var chroma;
+var chroma, Twitter, twitter;
 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
@@ -12,7 +12,8 @@ var Colors = new Meteor.Collection('colors');
 Meteor.settings = _.extend({
   'name': 'Lumière',
   'phone': '+1 651 400 1501',
-  'lights': 160
+  'lights': 160,
+  'twitterFilter': ['lumierebot', 'lumierelights', 'lumierelighting']
 }, Meteor.settings);
 
 
@@ -108,6 +109,12 @@ if (Meteor.isServer) {
   // "npm" packages
   chroma = Meteor.npmRequire('chroma-js');
 
+  // Connect to twitter
+  if (_.isObject(Meteor.settings.twitterAuth)) {
+    Twitter = Meteor.npmRequire('twitter');
+    twitter = new Twitter(Meteor.settings.twitterAuth);
+  }
+
   // On startup, create methods
   Meteor.startup(function() {
     Meteor.methods({
@@ -199,6 +206,26 @@ if (Meteor.isServer) {
         }
       }
     });
+  });
+}
+
+
+// Twitter streaming input handling
+if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
+  twitter.stream('filter', { track: Meteor.settings.twitterFilter }, function(stream) {
+    // Since we are out of the context of Meteor and Fiber, we have to wrap
+    // this.
+    stream.on('data', Meteor.bindEnvironment(function(data) {
+      var text;
+
+      // Data in, strip out non-word stuff and send through
+      if (_.isObject(data) && data.text) {
+        text = data.text.replace(/(#[A-Za-z0-9]+)|(@[A-Za-z0-9]+)|([^0-9A-Za-z, \t])|(\w+:\/\/\S+)/ig, ' ');
+        if (text.length > 2) {
+          Meteor.call('addColor', text);
+        }
+      }
+    }));
   });
 }
 
