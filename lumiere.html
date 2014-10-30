@@ -37,6 +37,11 @@
 </body>
 
 
+<!-- An empty template for iron-router -->
+<template name="home">
+</template>
+
+
 <!-- Header template, contains status indicator -->
 <template name="header">
   <div class="header {{ status }}">
@@ -51,7 +56,7 @@
 <template name="lights">
   <div id="color-output-canvas" class="cf">
     {{#each current.colors }}
-      <div class="output-light" style="background-color: {{ . }};"></div>
+      <div class="output-light" style="background-color: {{ . }}; width: {{ lightWidth }}%;"></div>
     {{/each}}
   </div>
 

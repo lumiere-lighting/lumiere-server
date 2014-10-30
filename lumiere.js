@@ -47,30 +47,40 @@ if (Meteor.isClient) {
 
   // Status allows for a simple icon to show if the client
   // is connected to the server
-  Template.header.status = function() {
-    return Meteor.status().status;
-  };
-  Template.header.name = Meteor.settings.name;
+  Template.header.helpers({
+    status: function() {
+      return Meteor.status().status;
+    },
+    name: Meteor.settings.name
+  });
 
   // The current selection of lights
-  Template.lights.current = function() {
-    var recent = Colors.find({}, { sort: { timestamp: -1 }, limit: 1 }).fetch()[0];
+  Template.lights.helpers({
+    current: function() {
+      var recent = Colors.find({}, { sort: { timestamp: -1 }, limit: 1 }).fetch()[0];
 
-    if (!_.isUndefined(recent)) {
-      recent.input = recent.input.split(',').join(', ');
+      if (!_.isUndefined(recent)) {
+        recent.input = recent.input.split(',').join(', ');
+      }
+      return Meteor.lumiere.fillColor(recent);
+    },
+    lightWidth: function() {
+      var recent = Colors.find({}, { sort: { timestamp: -1 }, limit: 1 }).fetch()[0];
+      var length = recent.colors.length;
+      return (length === 0) ? 0 : (100 / length) - 0.00001;
     }
-    return Meteor.lumiere.fillColor(recent);
-  };
+  });
 
   // About sections
-  Template.about.phone = Meteor.settings.phone;
-  Template.about.name = Meteor.settings.name;
-  Template.nodes.name = Meteor.settings.name;
+  Template.about.helpers({
+    phone: Meteor.settings.phone,
+    name: Meteor.settings.name
+  });
 
   // All those colors!
-  Template.input.colorList = function() {
-    return Meteor.lumiere.colors;
-  };
+  Template.input.helpers({
+    colorList: Meteor.lumiere.colors
+  });
 
   // Events handled in the input template.
   Template.input.events({
@@ -351,4 +361,11 @@ Router.route('outgoing-colors', {
     });
     this.response.end(JSON.stringify(color) + '\n');
   }
+});
+
+
+
+// Iron router needs a default route
+Router.route('home', {
+  path: '*'
 });
