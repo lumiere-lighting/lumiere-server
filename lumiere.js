@@ -121,14 +121,16 @@ if (Meteor.isServer) {
       // Turn a string into a color
       findColor: function(input) {
         var names = _.pluck(Meteor.lumiere.colors, 'colorName');
-        var color = chroma('red');
+        var color = false;
         var colors = [];
         var found;
         var r;
 
         // First see if Chroma can handle the input, if that fails
-        // do a look up of custom colors, otherwise, just choose
-        // one at random
+        // do a look up of custom colors.
+        //
+        // We used to choose one at random, but handling bad language
+        // made me rethink handling this at all.
         try {
           color = chroma(input);
           color = color.hex();
@@ -140,8 +142,7 @@ if (Meteor.isServer) {
             color = Meteor.lumiere.colors[found].colors;
           }
           else {
-            r = (Math.floor(Math.random() * (_.size(Meteor.lumiere.colors))));
-            color = _.values(Meteor.lumiere.colors)[r].colors;
+            return false;
           }
         }
 
@@ -163,22 +164,24 @@ if (Meteor.isServer) {
       makeColors: function(input) {
         var colors = [];
         var inputs = [];
+        var outputs = [];
         var found;
 
         _.each(input.trim().split(','), function(c) {
           c = c.trim().replace(/\W/g, '').toLowerCase();
           if (c.length > 0) {
             found = Meteor.call('findColor', c);
+
             if (_.isString(found)) {
               colors.push(found);
+              inputs.push(c);
             }
             else if (_.isArray(found)) {
               found.forEach(function(f) {
                 colors.push(f);
               });
+              inputs.push(c);
             }
-
-            inputs.push(c);
           }
         });
 
