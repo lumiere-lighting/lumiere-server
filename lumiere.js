@@ -42,6 +42,9 @@ Meteor.lumiere.fillColor = function(color) {
 // as Meteor ends up rerendering everything when
 // one value is updated and can be very slow.
 if (Meteor.isClient) {
+  // Subscribe to data
+  Meteor.subscribe('colors-recent');
+
   // Status allows for a simple icon to show if the client
   // is connected to the server
   Template.header.status = function() {
@@ -115,8 +118,14 @@ if (Meteor.isServer) {
     twitter = new Twitter(Meteor.settings.twitterAuth);
   }
 
-  // On startup, create methods
+  // Startup
   Meteor.startup(function() {
+    // Create subscriptions to data for the client
+    Meteor.publish('colors-recent', function publishFunction() {
+      return Colors.find({}, { sort: { timestamp: -1 }, limit: 1 });
+    });
+
+    // Methods that can be shared on both server and client
     Meteor.methods({
       // Turn a string into a color
       findColor: function(input) {
