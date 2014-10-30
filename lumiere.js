@@ -12,7 +12,7 @@ var Colors = new Meteor.Collection('colors');
 Meteor.settings = _.extend({
   'name': 'Lumière',
   'phone': '+1 651 400 1501',
-  'lights': 160,
+  'lights': 10,
   'twitterFilter': ['lumierebot', 'lumierelights', 'lumierelighting']
 }, Meteor.settings);
 
@@ -26,12 +26,11 @@ Meteor.lumiere.fillColor = function(color) {
   var colors = [];
   var i;
 
-  if (!_.isUndefined(color) && _.isObject(color)) {
-    // Repeat colors
+  // Repeat colors if longer than needed
+  if (!_.isUndefined(color) && _.isObject(color) && color.colors.length < Meteor.settings.lights) {
     for (i = 0; i < Meteor.settings.lights; i++) {
       colors.push(color.colors[i % color.colors.length]);
     }
-
     color.colors = colors;
   }
   return color;
@@ -62,12 +61,11 @@ if (Meteor.isClient) {
       if (!_.isUndefined(recent)) {
         recent.input = recent.input.split(',').join(', ');
       }
-      return Meteor.lumiere.fillColor(recent);
-    },
-    lightWidth: function() {
-      var recent = Colors.find({}, { sort: { timestamp: -1 }, limit: 1 }).fetch()[0];
-      var length = recent.colors.length;
-      return (length === 0) ? 0 : (100 / length) - 0.00001;
+
+      recent =  Meteor.lumiere.fillColor(recent);
+      length = recent.colors.length;
+      recent.lightWidth = (length === 0) ? 0 : (100 / length) - 0.00001;
+      return recent;
     }
   });
 

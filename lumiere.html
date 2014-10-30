@@ -15,24 +15,32 @@
 <!-- Main body output -->
 <body>
   <div class="app-container">
-    {{> header}}
-    {{> lights}}
+    <div class="center-container">
+      {{> header}}
+    </div>
 
-    <div class="spacer"></div>
+    <div class="full-container">
+      {{> lights}}
+    </div>
 
-    {{> input}}
 
-    <div class="spacer"></div>
+    <div class="center-container">
+      <div class="spacer"></div>
 
-    {{> about}}
+      {{> input}}
 
-    <div class="spacer"></div>
+      <div class="spacer"></div>
 
-    {{> nodes}}
+      {{> about}}
 
-    <div class="spacer"></div>
+      <div class="spacer"></div>
 
-    {{> credits}}
+      {{> nodes}}
+
+      <div class="spacer"></div>
+
+      {{> credits}}
+    </div>
   </div>
 </body>
 
@@ -56,7 +64,7 @@
 <template name="lights">
   <div id="color-output-canvas" class="cf">
     {{#each current.colors }}
-      <div class="output-light" style="background-color: {{ . }}; width: {{ lightWidth }}%;"></div>
+      <div class="output-light" style="background-color: {{ . }}; width: {{ current.lightWidth }}%;"></div>
     {{/each}}
   </div>
 

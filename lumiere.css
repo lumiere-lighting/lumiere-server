@@ -21,11 +21,20 @@ body {
 }
 
 .app-container {
+  padding-top: 1em;
+  margin-bottom: 4em;
+}
+
+.center-container {
   width: 30em;
   max-width: 100%;
   margin: 0 auto;
-  padding-top: 1em;
-  margin-bottom: 4em;
+}
+
+.full-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .app-container * {
@@ -83,21 +92,12 @@ body {
 
 #color-output-canvas {
   width: 100%;
-  min-height: 13em;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
 }
 
 #color-output-canvas .output-light {
-  height: 1.5em;
-  width: 1.5em;
+  height: 10em;
   float: left;
-  border: .25em solid #212125;
-  -webkit-border-radius: 55%;
-  -moz-border-radius: 55%;
-  border-radius: 55%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
 }
 
 .color-output-input {
