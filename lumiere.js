@@ -13,7 +13,7 @@ Meteor.settings = _.extend({
   'name': 'Lumière',
   'phone': '+1 651 400 1501',
   'lights': 10,
-  'twitterFilter': ['lumierebot', 'lumierelights', 'lumierelighting']
+  'twitterFilter': ['lumierebot']
 }, Meteor.settings);
 
 
@@ -263,7 +263,7 @@ if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
 
 // "API" routing
 
-// Routing for text input.  Can test locally with something like:
+// Routing for text input via Twilio.  Can test locally with something like:
 // curl --data "Body=blue" -X POST http://localhost:3000/api/colors/twilio
 Router.route('incoming-twilio', {
   path: '/api/colors/twilio',
@@ -310,6 +310,36 @@ Router.route('incoming-twilio', {
       'Content-Type': 'text/xml'
     });
     this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + _.sample(responses) + ' -' + Meteor.settings.name + '</Sms> </Response>\n');
+  }
+});
+
+// Routing Yo app input.  Can test locally with something like:
+// curl -X GET http://localhost:3000/api/colors/yo?username=testing
+Router.route('incoming-yo', {
+  path: '/api/colors/yo',
+  where: 'server',
+  action: function() {
+    var thisRoute = this;
+    var username = (_.isObject(this.request.query)) ? this.request.query.username : false;
+
+    // Just pick a random color
+    Meteor.call('addColor', _.sample(Meteor.lumiere.colors).colorName);
+
+    if (_.isString(Meteor.settings.yoAuth)) {
+      // Send Yo back
+      HTTP.post('http://api.justyo.co/yo/', {
+        data: {
+          api_token: Meteor.settings.yoAuth,
+          username: username,
+          link: 'http://lumiere.lighting'
+        }
+      }, function() {
+        thisRoute.response.end('Yo-ed');
+      });
+    }
+    else {
+      this.response.end('Yo-less');
+    }
   }
 });
 

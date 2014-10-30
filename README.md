@@ -30,13 +30,23 @@ The application is a [Meteor](http://www.meteor.com/) application.
 1. Get the code: `git clone https://github.com/lumiere-lighting/lumiere-server.git`
 1. To run locally, run the following from inside the code directory: `meteor`
 
-### Set up SMS phone number
+### Twilio integration
 
 These instructions are for using Twilio, but it would not be too hard to change things around for another SMS service.
 
 1. Create an account at Twilio.
 1. Obtain a [phone number](https://www.twilio.com/user/account/phone-numbers) or use an existing one if you already have one set up.
-1. Under the settings for that phone number, set the Messaging POST value to `http://<YOUR_APP_NAME>.meteor.com/api/colors/twilio`.
+1. Under the settings for that phone number, set the Messaging POST value to `http://<YOUR URL>/api/colors/twilio`.
+
+### Yo integration
+
+Make a Yo account and set up the [Yo API](http://dev.justyo.co/) to post to `http://<YOUR URL>/api/colors/yo`.  If you want the account to Yo back then make sure to add your Yo API key in the settings (see below) in the `yoAuth` value.
+
+### Twitter integration
+
+Setup a Twitter application; it's actually good to have two (one for dev) as Twitter will disconnect the streaming API if it thinks there are multiple connections going on.  Generate an access token set for your application, and then update the relevant values in the settings (see below).
+
+Use the `twitterFilter` value in the settings to filter what keywords will trigger Lumiere to look at tweets for colors.
 
 ### Settings
 
@@ -46,16 +56,14 @@ For sensitive data like autehntication tokens or to override some of the configu
       "name": "Lumière",
       "phone": "+1 651 400 1501",
       "lights": 160,
-      "twitterFilter": ["lumierebot", "lumierelights", "lumierelighting"],
-      // Note that twitter does not like multiple connections to the
-      // streaming API so it's best to have settings/twitter apps for dev and
-      // prod
+      "twitterFilter": ["lumierebot"],
       "twitterAuth": {
         "consumer_key": "xxx",
         "consumer_secret": "xxx",
         "access_token_key": "xxx",
         "access_token_secret": "xxx"
-      }
+      },
+      "yoAuth": "xxxx"
     }
 
 Make sure to use `meteor --settings=settings.json` and `meteor deploy --settings=settings.json` respectively.
