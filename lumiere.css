@@ -90,15 +90,29 @@ body {
   background-color: #66FF33;
 }
 
-#color-output-canvas {
+#color-output-canvas-container {
   width: 100%;
   margin-bottom: 2em;
+}
+
+#color-output-canvas {
+  width: 100%;
   min-height: 10em;
+}
+
+#color-output-canvas.stuck {
+  position: fixed;
+  height: 2em;
+  top: 0;
 }
 
 #color-output-canvas .output-light {
   height: 10em;
   float: left;
+}
+
+#color-output-canvas.stuck .output-light {
+  height: 2em;
 }
 
 .color-output-input {

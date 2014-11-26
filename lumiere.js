@@ -72,6 +72,33 @@ if (Meteor.isClient) {
     }
   });
 
+  // Lights scrolling thing.  'scroll window' does not work as a Meteor event
+  $(document).ready(function() {
+    var container = '#color-output-canvas-container';
+    var canvas = '#color-output-canvas';
+    var stuckClass = 'stuck';
+
+    if ($(container).size() > 0) {
+      // Make sure container is constant height
+      $(container).height($(canvas).height());
+
+      $(window).on('scroll', _.throttle(function(e) {
+        var $container = $(container);
+        var $canvas = $(canvas);
+        var scrollTop = $(window).scrollTop();
+        var stuck = $canvas.hasClass(stuckClass);
+        var bottom = $container.offset().top + $container.height();
+
+        if (!stuck && scrollTop > bottom) {
+          $canvas.addClass(stuckClass);
+        }
+        else if (stuck && scrollTop <= bottom) {
+          $canvas.removeClass(stuckClass);
+        }
+      }, 100));
+    }
+  });
+
   // About sections
   Template.about.helpers({
     phone: Meteor.settings.phone,
