@@ -1,5 +1,6 @@
 {
   "chroma-js": "0.5.9",
   "twilio": "1.7.0",
-  "twitter": "0.2.13"
+  "twitter": "0.2.13",
+  "profanity-util": "0.0.2"
 }

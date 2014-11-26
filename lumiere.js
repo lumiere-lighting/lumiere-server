@@ -3,7 +3,7 @@
  */
 
 // Place hold some variables
-var chroma, Twitter, twitter;
+var chroma, Twitter, twitter, profanity, profanityList, profanityRegex, purify;
 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
@@ -119,7 +119,7 @@ if (Meteor.isClient) {
 
       Meteor.call('addColor',
         $form.find('#color-input-text').val(),
-        { source: 'web' },
+        { source: 'the Web' },
         function(error, response) {
         if (error) {
           throw new error;
@@ -152,6 +152,20 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   // "npm" packages
   chroma = Meteor.npmRequire('chroma-js');
+  profanity = Meteor.npmRequire('profanity-util');
+  // Profanity util has a good list of words, but does a stupid
+  // regex when replacing (takes into account spacing)
+  profanityList = Meteor.npmRequire('profanity-util/lib/swearwords.json');
+  profanityRegex =  new RegExp('(' + profanityList.join('|') + ')', 'gi');
+  purify = function(str) {
+    return str.replace(profanityRegex, function(val) {
+      var str = val.substr(0, 1);
+      for (var i = 0; i < val.length - 2; i += 1) {
+        str += '*';
+      }
+      return str + val.substr(-1);
+    });
+  }
 
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
@@ -276,7 +290,10 @@ if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
       if (_.isObject(data) && data.text) {
         text = data.text.replace(/(#[A-Za-z0-9]+)|(@[A-Za-z0-9]+)|([^0-9A-Za-z, \t])|(\w+:\/\/\S+)/ig, ' ');
         if (text.length > 2) {
-          Meteor.call('addColor', text, { source: 'twitter', username: '@' + data.user.screen_name });
+          Meteor.call('addColor', text, {
+            source: 'Twitter',
+            username: '@' + purify(data.user.screen_name)
+          });
         }
       }
     }));
@@ -337,7 +354,7 @@ Router.route('incoming-twilio', {
     // https://www.twilio.com/docs/api/twiml
     if (this.request.body && this.request.body.Body) {
       Meteor.call('addColor', this.request.body.Body, {
-        source: 'twilio',
+        source: 'Twilio (SMS)',
         state: this.request.body.FromState,
         city: this.request.body.FromCity,
         country: this.request.body.FromCountry
@@ -359,11 +376,11 @@ Router.route('incoming-yo', {
   where: 'server',
   action: function() {
     var thisRoute = this;
-    var username = (_.isObject(this.request.query)) ? this.request.query.username : false;
+    var username = (_.isObject(this.request.query)) ? purify(this.request.query.username) : false;
 
     // Just pick a random color
     Meteor.call('addColor', _.sample(Meteor.lumiere.colors).colorName, {
-      source: 'yo',
+      source: 'Yo',
       username: username
     });
 

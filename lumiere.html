@@ -25,7 +25,7 @@
 
 
     <div class="center-container">
-      <div class="spacer"></div>
+      <div class="spacer short-top"></div>
 
       {{> input}}
 
@@ -71,7 +71,13 @@
   </div>
 
   <div class="color-output-input">
-    {{ current.input }}
+    "{{ current.input }}"
+    {{#if current.username}}
+      by {{ current.username }}
+    {{/if}}
+    {{#if current.source}}
+      via {{ current.source }}
+    {{/if}}
   </div>
 </template>
 

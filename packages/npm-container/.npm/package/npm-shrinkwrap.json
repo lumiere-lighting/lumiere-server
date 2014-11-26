@@ -3,6 +3,14 @@
     "chroma-js": {
       "version": "0.5.9"
     },
+    "profanity-util": {
+      "version": "0.0.2",
+      "dependencies": {
+        "underscore": {
+          "version": "1.6.0"
+        }
+      }
+    },
     "twilio": {
       "version": "1.7.0",
       "dependencies": {

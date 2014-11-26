@@ -37,22 +37,26 @@ body {
   margin: 0 auto;
 }
 
-.app-container * {
+* {
   font-family: 'Varela Round', sans-serif;
 }
 
-.app-container a {
+a {
   color: #3366FF;
 }
 
-.app-container code {
+code {
   font-family: monospace;
 }
 
-.app-container .spacer {
+.spacer {
   width: 50%;
   margin: 4em auto;
   border-bottom: 2px solid #989898;
+}
+
+.spacer.short-top {
+  margin-top: 2em;
 }
 
 .header h1 {
