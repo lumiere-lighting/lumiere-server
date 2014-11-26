@@ -80,7 +80,7 @@ if (Meteor.isClient) {
 
     if ($(container).size() > 0) {
       // Make sure container is constant height
-      $(container).height($(canvas).height());
+      //$(container).height($(canvas).height());
 
       $(window).on('scroll', _.throttle(function(e) {
         var $container = $(container);
