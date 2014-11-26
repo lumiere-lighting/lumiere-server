@@ -204,7 +204,9 @@ body {
   }
 
   .app-container {
-    width: 95%;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
   .status-indicator {
