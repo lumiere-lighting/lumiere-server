@@ -137,6 +137,7 @@ body {
   -webkit-border-radius: .2em;
   -moz-border-radius: .2em;
   border-radius: .2em;
+  color: #212125;
 }
 
 #color-input-submit {
@@ -146,6 +147,7 @@ body {
   -webkit-border-radius: .2em;
   -moz-border-radius: .2em;
   border-radius: .2em;
+  color: #212125;
 }
 
 #color-input-submit:hover {

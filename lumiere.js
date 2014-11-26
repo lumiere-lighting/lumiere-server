@@ -41,7 +41,7 @@ Meteor.lumiere.fillColor = function(color) {
 // as Meteor ends up rerendering everything when
 // one value is updated and can be very slow.
 if (Meteor.isClient) {
-  // Subscribe to data
+  // Subscribe to specific data view
   Meteor.subscribe('colors-recent');
 
   // Status allows for a simple icon to show if the client
@@ -56,10 +56,13 @@ if (Meteor.isClient) {
   // The current selection of lights
   Template.lights.helpers({
     current: function() {
-      var recent = Colors.find({}, { sort: { timestamp: -1 }, limit: 1 }).fetch()[0];
+      var recent = Colors.find().fetch()[0];
 
       if (!_.isUndefined(recent)) {
         recent.input = recent.input.split(',').join(', ');
+      }
+      else {
+        return false;
       }
 
       recent =  Meteor.lumiere.fillColor(recent);
@@ -87,7 +90,10 @@ if (Meteor.isClient) {
       e.preventDefault();
       var $form = $(e.currentTarget);
 
-      Meteor.call('addColor', $form.find('#color-input-text').val(), function(error, response) {
+      Meteor.call('addColor',
+        $form.find('#color-input-text').val(),
+        { source: 'web' },
+        function(error, response) {
         if (error) {
           throw new error;
         }
@@ -129,7 +135,7 @@ if (Meteor.isServer) {
   // Startup
   Meteor.startup(function() {
     // Create subscriptions to data for the client
-    Meteor.publish('colors-recent', function publishFunction() {
+    Meteor.publish('colors-recent', function() {
       return Colors.find({}, { sort: { timestamp: -1 }, limit: 1 });
     });
 
@@ -208,21 +214,22 @@ if (Meteor.isServer) {
         };
       },
 
-      // Save colors to data-store
-      saveColors: function(input, colors) {
-        Colors.insert({
+      // Save colors to data-store.  Allow for arbitrary meta data
+      saveColors: function(input, colors, meta) {
+        meta = (_.isObject(meta)) ? meta : {};
+        Colors.insert(_.extend(meta, {
           timestamp: (new Date()).getTime(),
           input: input,
           colors: colors
-        });
+        }));
       },
 
       // Wrapper for make and save
-      addColor: function(input) {
+      addColor: function(input, meta) {
         var colors = Meteor.call('makeColors', input);
 
         if (colors.colors.length > 0) {
-          Meteor.call('saveColors', colors.input, colors.colors);
+          Meteor.call('saveColors', colors.input, colors.colors, meta);
         }
       }
     });
@@ -242,7 +249,7 @@ if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
       if (_.isObject(data) && data.text) {
         text = data.text.replace(/(#[A-Za-z0-9]+)|(@[A-Za-z0-9]+)|([^0-9A-Za-z, \t])|(\w+:\/\/\S+)/ig, ' ');
         if (text.length > 2) {
-          Meteor.call('addColor', text);
+          Meteor.call('addColor', text, { source: 'twitter', username: '@' + data.user.screen_name });
         }
       }
     }));
@@ -302,7 +309,12 @@ Router.route('incoming-twilio', {
     // Should return a TwiML document.
     // https://www.twilio.com/docs/api/twiml
     if (this.request.body && this.request.body.Body) {
-      Meteor.call('addColor', this.request.body.Body);
+      Meteor.call('addColor', this.request.body.Body, {
+        source: 'twilio',
+        state: this.request.body.FromState,
+        city: this.request.body.FromCity,
+        country: this.request.body.FromCountry
+      });
     }
 
     // Return some TwiML
@@ -323,7 +335,10 @@ Router.route('incoming-yo', {
     var username = (_.isObject(this.request.query)) ? this.request.query.username : false;
 
     // Just pick a random color
-    Meteor.call('addColor', _.sample(Meteor.lumiere.colors).colorName);
+    Meteor.call('addColor', _.sample(Meteor.lumiere.colors).colorName, {
+      source: 'yo',
+      username: username
+    });
 
     if (_.isString(Meteor.settings.yoAuth)) {
       // Send Yo back
