@@ -259,6 +259,9 @@ if (Meteor.isServer) {
     });
   }
 
+  // Create an array of color names
+  Meteor.lumiere.colorNames = _.pluck(Meteor.lumiere.colors, 'colorName');
+
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
     Twitter = Meteor.npmRequire('twitter');
@@ -276,7 +279,6 @@ if (Meteor.isServer) {
     Meteor.methods({
       // Turn a string into a color
       findColor: function(input) {
-        var names = _.pluck(Meteor.lumiere.colors, 'colorName');
         var color = false;
         var colors = [];
         var found;
@@ -292,7 +294,7 @@ if (Meteor.isServer) {
           color = color.hex();
         }
         catch (e) {
-          found = names.indexOf(input);
+          found = Meteor.lumiere.colorNames.indexOf(input);
 
           if (found !== -1) {
             color = Meteor.lumiere.colors[found].colors;
