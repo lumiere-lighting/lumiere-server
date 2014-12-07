@@ -259,8 +259,9 @@ if (Meteor.isServer) {
     });
   }
 
-  // Create an array of color names
-  Meteor.lumiere.colorNames = _.pluck(Meteor.lumiere.colors, 'colorName');
+  // Create an array of color names, and sort by length for later
+  Meteor.lumiere.colorNames =
+    _.sortBy(_.pluck(Meteor.lumiere.colors, 'colorName'), 'length').reverse();
 
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
@@ -318,13 +319,38 @@ if (Meteor.isServer) {
         return color;
       },
 
-      // Turn input into a set of colors
+      // Turn input into a set of colors.  Using comma separation is way easier
+      // to handle multiple colors but harder to explain to people, so we do
+      // try to read multiple colors with spaces but this gets a bit diffcult
+      // or inaccruate because there are colors like "red" and "bright red"
       makeColors: function(input) {
         var colors = [];
         var inputs = [];
         var outputs = [];
+        var nocommas = [];
         var found;
 
+        // If no commas found, try to find words in the input and insert
+        // commas.  We eplace each color we find with its index and then
+        // put back together
+        if (input.indexOf(',') === -1) {
+          input = input.trim().replace(/\W/g, '').toLowerCase();
+          // Replace with indexes
+          _.each(Meteor.lumiere.colorNames, function(c, ci) {
+            if (input.indexOf(c) !== -1) {
+              input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
+            }
+          });
+          nocommas = input.split(',');
+          // Put together with colors
+          nocommas = _.map(nocommas, function(n, ni) {
+            return (n) ? Meteor.lumiere.colorNames[parseInt(n, 10)] : '';
+          });
+          nocommas = _.filter(nocommas, function(n, ni) { return n; });
+          input = nocommas.join(',');
+        }
+
+        // Find colors
         _.each(input.trim().split(','), function(c) {
           c = c.trim().replace(/\W/g, '').toLowerCase();
           if (c.length > 0) {
