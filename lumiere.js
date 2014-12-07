@@ -357,12 +357,17 @@ if (Meteor.isServer) {
         }));
       },
 
-      // Wrapper for make and save
+      // Wrapper for make and save; this is what any input mechanisms
+      // should call.
       addColor: function(input, meta) {
         var colors = Meteor.call('makeColors', input);
 
         if (colors.colors.length > 0) {
           Meteor.call('saveColors', colors.input, colors.colors, meta);
+          return true;
+        }
+        else {
+          return false;
         }
       }
     });
@@ -441,11 +446,13 @@ Router.route('incoming-twilio', {
       'Our robots are working hard to get those colors just right for you.',
       'Wait for it... Bam! Colors!'
     ];
+    var updated = false;
+    var response;
 
     // Should return a TwiML document.
     // https://www.twilio.com/docs/api/twiml
     if (this.request.body && this.request.body.Body) {
-      Meteor.call('addColor', this.request.body.Body, {
+      updated = Meteor.call('addColor', this.request.body.Body, {
         source: 'Twilio (SMS)',
         state: this.request.body.FromState,
         city: this.request.body.FromCity,
@@ -454,10 +461,11 @@ Router.route('incoming-twilio', {
     }
 
     // Return some TwiML
+    response = (updated) ? _.sample(responses) : 'We\'re sorry; we didn\'t recognize any of those colors. Try again; there are 1,000+ names of colors to choose from like "' + _.sample(Meteor.lumiere.colors).colorName + '".';
     this.response.writeHead(200, {
       'Content-Type': 'text/xml'
     });
-    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + _.sample(responses) + ' -' + Meteor.settings.name + '</Sms> </Response>\n');
+    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + response + ' -' + Meteor.settings.name + '</Sms> </Response>\n');
   }
 });
 
