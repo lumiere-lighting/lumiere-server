@@ -3,7 +3,7 @@
  */
 
 // Place hold some variables
-var chroma, Twitter, twitter, profanity, profanityList, profanityRegex, purify;
+var chroma, Twitter, twitter, profanity, profanityList, profanityRegex, purify, currentID;
 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
@@ -58,6 +58,7 @@ if (Meteor.isClient) {
     current: function() {
       var recent = Colors.find().fetch()[0];
 
+      // Check that we have something
       if (!_.isUndefined(recent)) {
         recent.input = recent.input.split(',').join(', ');
       }
@@ -65,39 +66,49 @@ if (Meteor.isClient) {
         return false;
       }
 
+      // Fill the lights
       recent =  Meteor.lumiere.fillColor(recent);
       length = recent.colors.length;
       recent.lightWidth = (length === 0) ? 0 : (100 / length) - 0.00001;
+
+      // Some inputs are not worth showing
+      if (recent.source === 'the Colorpicker') {
+        recent.input = false;
+      }
+
       return recent;
     }
   });
 
   // Lights scrolling thing.  'scroll window' does not work as a Meteor event
-  $(document).ready(function() {
-    var container = '#color-output-canvas-container';
-    var canvas = '#color-output-canvas';
-    var stuckClass = 'stuck';
+  Template.lights.rendered = function() {
+    $(document).ready(function() {
+      var container = '#color-output-canvas-container';
+      var canvas = '#color-output-canvas';
+      var stuckClass = 'stuck';
 
-    if ($(container).size() > 0) {
-      // Make sure container is constant height
-      //$(container).height($(canvas).height());
+      if ($(container).size() > 0) {
+        // Make sure container is constant height
+        //$(container).height($(canvas).height());
 
-      $(window).on('scroll', _.throttle(function(e) {
-        var $container = $(container);
-        var $canvas = $(canvas);
-        var scrollTop = $(window).scrollTop();
-        var stuck = $canvas.hasClass(stuckClass);
-        var bottom = $container.offset().top + $container.height();
+        $(window).on('scroll', _.throttle(function(e) {
+          var $container = $(container);
+          var $canvas = $(canvas);
+          var scrollTop = $(window).scrollTop();
+          var stuck = $canvas.hasClass(stuckClass);
+          // Offset a bit so the stuck container seems a bit more smooth
+          var bottom = $container.offset().top + $container.height() - 10;
 
-        if (!stuck && scrollTop > bottom) {
-          $canvas.addClass(stuckClass);
-        }
-        else if (stuck && scrollTop <= bottom) {
-          $canvas.removeClass(stuckClass);
-        }
-      }, 100));
-    }
-  });
+          if (!stuck && scrollTop > bottom) {
+            $canvas.addClass(stuckClass);
+          }
+          else if (stuck && scrollTop <= bottom) {
+            $canvas.removeClass(stuckClass);
+          }
+        }, 100));
+      }
+    });
+  };
 
   // About sections
   Template.about.helpers({
@@ -105,43 +116,124 @@ if (Meteor.isClient) {
     name: Meteor.settings.name
   });
 
-  // All those colors!
+  // Color input
   Template.input.helpers({
-    colorList: Meteor.lumiere.colors
+    inputColors: function() {
+      var inputs = Session.get('input');
+
+      // If no inputs yet, use default
+      if (!inputs || !_.isArray(inputs) || !inputs.length) {
+        inputs = [{
+          color: '#1b26f7'
+        }];
+      }
+      // Add index because mustache is stupid
+      inputs = _.map(inputs, function(i, ii) {
+        return {
+          color: i.color,
+          current: (ii == inputs.length - 1) ? true : false,
+          index: ii
+        };
+      });
+
+      Session.set('input', inputs);
+      return inputs;
+    }
   });
+
+  // When done rendered
+  Template.input.rendered = function() {
+    var $picker = $('.color-picker');
+    var $inputs = $('.color-inputs');
+    var defaultColor = '#1b26f7';
+    var current = _.findWhere(Session.get('input'), { current: true });
+
+    // Only do if not done
+    if ($picker.size() > 0 && !$picker.hasClass('processed')) {
+      // Make picker
+      $picker.addClass('processed');
+      $picker.iris({
+        color: current.color,
+        mode: 'hsl',
+        controls: {
+          horiz: 'h',
+          vert: 's',
+          strip: 'l'
+        },
+        hide: false,
+        border: false,
+        width: $picker.width(),
+        palettes: false,
+        change: function(e, ui) {
+          $inputs.find('.current-input')
+            .css('background-color', ui.color.toString())
+            .attr('data-color', ui.color.toString());
+        }
+      });
+    }
+  };
 
   // Events handled in the input template.
   Template.input.events({
-    // Submit new colors
-    'submit .color-input-form': function(e) {
+    // Add another color
+    'click .add-another': function(e) {
       e.preventDefault();
-      var $form = $(e.currentTarget);
+      var color = $('.color-picker').iris('color').toString();
+      var inputs = Session.get('input');
+      var current = _.findWhere(inputs, { current: true });
 
-      Meteor.call('addColor',
-        $form.find('#color-input-text').val(),
-        { source: 'the Web' },
-        function(error, response) {
-        if (error) {
-          throw new error;
-        }
-        else {
-          $form.find('#color-input-text').val('');
-        }
+      // Set current
+      inputs[current.index].color = color;
+      // Add new
+      inputs.push({
+        color: color
       });
+
+      // This will trigger the
+      Session.set('input', inputs);
     },
-    // Add colors to input
-    'click li.color-choice': function(e) {
+    // Remove color
+    'click .color-inputs li[data-color]:not(.current-input)': function(e) {
       e.preventDefault();
-      var $color = $(e.currentTarget);
-      var $input = $('#color-input-text');
-      var current = $input.val().split(',');
-      var name = $color.data('name');
-      current.push(name);
+      var inputs = Session.get('input');
+      var current = _.findWhere(inputs, { current: true });
+      var color = $('.color-picker').iris('color').toString();
 
-      current = _.filter(current, function(c) {
-        return (!!c);
-      });
-      $input.val(current.join(','));
+      // Save current first, since we don't do this on every change
+      inputs[current.index].color = color;
+
+      // "this" ends up being the input object (not sure why)
+      if (_.isObject(this) && !_.isUndefined(this.index)) {
+        if (inputs.length > 1) {
+          inputs.splice(this.index, 1);
+          Session.set('input', inputs);
+        }
+      }
+    },
+    // Save color
+    'click .save-input': function(e) {
+      var inputs = Session.get('input');
+      var current = _.findWhere(inputs, { current: true });
+      var color = $('.color-picker').iris('color').toString();
+      var saveInput;
+
+      // Save current first, since we don't do this on every change
+      inputs[current.index].color = color;
+
+      // Create input
+      saveInput = _.pluck(inputs, 'color').join(',');
+
+      // Save
+      Meteor.call('addColor', saveInput, { source: 'the Colorpicker' },
+        function(error, response) {
+          if (error) {
+            throw new error;
+          }
+          else {
+            // Reset input
+            Session.set('input', undefined);
+          }
+        });
     }
   });
 }

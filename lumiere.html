@@ -74,7 +74,9 @@
   </div>
 
   <div class="color-output-input">
-    "{{ current.input }}"
+    {{#if current.input}}
+      "{{ current.input }}"
+    {{/if}}
     {{#if current.username}}
       by {{ current.username }}
     {{/if}}
@@ -88,31 +90,17 @@
 <!-- Input template for input of colors -->
 <template name="input">
   <div class="color-input-container">
-    <form class="color-input-form cf">
-      <input type="text" placeholder="Enter a comma-separated list of colors" value="{{ colorInputText }}" id="color-input-text">
-
-      <input type="submit" id="color-input-submit" value="change">
-
-      <div class="color-chooser">
-        <ul>
-          <li class="instructions">Add a color to the list ...</li>
-          {{#each colorList}}
-            <li class="color-choice" data-name="{{ colorName }}">
-              <div>
-                <div class="color-name-container">
-                  {{ colorName }}
-                </div>
-                <div class="color-swatch-container">
-                  {{#each this.colors}}
-                    <span class="color-swatch" style="background-color: {{ . }};"></span>
-                  {{/each}}
-                </div>
-              </div>
-            </li>
-          {{/each}}
-        </ul>
-      </div>
-    </form>
+    <ul class="color-inputs">
+      {{#each inputColors}}
+        <li class="{{#if current}}current-input{{/if}}"
+          data-color="{{ color }}"
+          data-index="{{ index }}"
+          style="background-color: {{ color }};"></li>
+      {{/each}}
+      <li class="add-another" title="Add another">+</li>
+      <li class="save-input" title="Set lights to these colors">&#10003;</li>
+    </ul>
+    <div class="color-picker"></div>
   </div>
 </template>
 
