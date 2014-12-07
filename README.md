@@ -6,7 +6,7 @@
 
 There are over 1,500 color words and sets.  Color words are a combination of [Chroma.js](https://github.com/gka/chroma.js/blob/master/src/colors/w3cx11.coffee), [Name that Color](https://github.com/gka/chroma.js/blob/master/src/colors/colorbrewer.coffee), and some custom ones.  Feel free to [suggest](https://github.com/lumiere-lighting/lumiere-server/issues) some more.
 
-Live server at at [lumiere.lighting](http://lumiere.lighting).  Watch a [video of an example deployment](https://www.youtube.com/watch?v=_k-bI2xsQ-s).
+Live server at [lumiere.lighting](http://lumiere.lighting).  Watch a [video of an example deployment](https://www.youtube.com/watch?v=_k-bI2xsQ-s).
 
 Inspiration taken from [textmas](https://github.com/emilyville/textmas).
 
@@ -14,7 +14,7 @@ Inspiration taken from [textmas](https://github.com/emilyville/textmas).
 
 * A Meteor application is run that keeps track of what color(s) the lights should be.
 * Provides a web interface for choosing colors and basic representation of current colors.
-* Provides basic API for retrieving colors as well as setting colors with SMS (Twilio).
+* Provides basic API for retrieving colors as well as setting colors with other services like Twilio or Twitter.
 
 ## Nodes
 
@@ -28,7 +28,9 @@ The application is a [Meteor](http://www.meteor.com/) application.
 
 1. Install Meteor: `curl https://install.meteor.com | /bin/sh`
 1. Get the code: `git clone https://github.com/lumiere-lighting/lumiere-server.git`
+1. If you plan on running your own server (as opposed to helping to develop the existing one), remove the Meteor ID file first.  A new one will be created when you run `meteor` and you should check this into your new repo.  `rm .meteor/.id`
 1. To run locally, run the following from inside the code directory: `meteor`
+    * Depending on your integration and settings below, you will probably want to run: `meteor --settings=your-settings.json`
 
 ### Twilio integration
 
