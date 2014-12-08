@@ -323,35 +323,66 @@ if (Meteor.isServer) {
       // Turn input into a set of colors.  Using comma separation is way easier
       // to handle multiple colors but harder to explain to people, so we do
       // try to read multiple colors with spaces but this gets a bit diffcult
-      // or inaccruate because there are colors like "red" and "bright red"
+      // or inaccruate because there are colors like
+      // "blue", "green" and "bluegreen"
+      //
+      // Some tests:
+      // curl --data "Body=blue" -X POST http://localhost:3000/api/colors/twilio
+      // curl --data "Body=blue red green" -X POST http://localhost:3000/api/colors/twilio
+      // curl --data "Body=blue, red, green" -X POST http://localhost:3000/api/colors/twilio
+      // curl --data "Body=blue green red" -X POST http://localhost:3000/api/colors/twilio
+      // curl --data "Body=bluegreen red" -X POST http://localhost:3000/api/colors/twilio
+      // curl --data "Body=red bright red" -X POST http://localhost:3000/api/colors/twilio
       makeColors: function(input) {
         var colors = [];
         var inputs = [];
         var outputs = [];
-        var nocommas = [];
-        var found;
+        var noCommas = [];
+        var onlySpaces = [];
+        var found, onlySpacesWorks;
 
         // If no commas found, try to find words in the input and insert
-        // commas.  We eplace each color we find with its index and then
-        // put back together
+        // commas.
+        //
+        // First we see if we can find each color separated by a space,
+        // but if that doesn't work, the we try the more verbose way,
+        // which is to replace each color we find with its index and then
+        // put back together, using a list of colors ordered by length
         if (input.indexOf(',') === -1) {
-          input = input.trim().replace(/\W/g, '').toLowerCase();
-          // Replace with indexes
-          _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
-            if (input.indexOf(c) !== -1) {
-              input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
+          // Try the simple approach
+          onlySpacesWorks = true
+          _.each(input.trim().replace(/\W/g, ' ').toLowerCase().split(' '), function(s, si) {
+            if (Meteor.lumiere.colorNamesSorted.indexOf(s) !== -1) {
+              onlySpaces.push(s);
+            }
+            else {
+              onlySpacesWorks = false;
             }
           });
-          nocommas = input.split(',');
-          // Put together with colors
-          nocommas = _.map(nocommas, function(n, ni) {
-            return (n) ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
-          });
-          nocommas = _.filter(nocommas, function(n, ni) { return n; });
-          input = nocommas.join(',');
+
+          // Check if the simple approach worked
+          if (onlySpacesWorks) {
+            input = onlySpaces.join(',');
+          }
+          else {
+            input = input.trim().replace(/\W/g, '').toLowerCase();
+            // Replace with indexes
+            _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
+              if (input.indexOf(c) !== -1) {
+                input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
+              }
+            });
+            noCommas = input.split(',');
+            // Put together with colors
+            noCommas = _.map(noCommas, function(n, ni) {
+              return (n) ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
+            });
+            noCommas = _.filter(noCommas, function(n, ni) { return n; });
+            input = noCommas.join(',');
+          }
         }
 
-        // Find colors
+        // Find colors from our input with commas
         _.each(input.trim().split(','), function(c) {
           c = c.trim().replace(/\W/g, '').toLowerCase();
           if (c.length > 0) {
