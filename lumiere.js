@@ -259,9 +259,10 @@ if (Meteor.isServer) {
     });
   }
 
-  // Create an array of color names, and sort by length for later
-  Meteor.lumiere.colorNames =
-    _.sortBy(_.pluck(Meteor.lumiere.colors, 'colorName'), 'length').reverse();
+  // Create an array of color names, and
+  Meteor.lumiere.colorNames = _.pluck(Meteor.lumiere.colors, 'colorName');
+  // Sort by length for later
+  Meteor.lumiere.colorNamesSorted = _.sortBy(Meteor.lumiere.colorNames, 'length').reverse();
 
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
@@ -336,7 +337,7 @@ if (Meteor.isServer) {
         if (input.indexOf(',') === -1) {
           input = input.trim().replace(/\W/g, '').toLowerCase();
           // Replace with indexes
-          _.each(Meteor.lumiere.colorNames, function(c, ci) {
+          _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
             if (input.indexOf(c) !== -1) {
               input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
             }
@@ -344,7 +345,7 @@ if (Meteor.isServer) {
           nocommas = input.split(',');
           // Put together with colors
           nocommas = _.map(nocommas, function(n, ni) {
-            return (n) ? Meteor.lumiere.colorNames[parseInt(n, 10)] : '';
+            return (n) ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
           });
           nocommas = _.filter(nocommas, function(n, ni) { return n; });
           input = nocommas.join(',');
