@@ -2026,13 +2026,11 @@ var colors = {
 
 
 // Sort and make array
-colors = _.sortBy(_.map(colors, function(c, ci) {
+colors = _.map(colors, function(c, ci) {
   return {
     colorName: ci.toLowerCase(),
     colors: _.isArray(c) ? c : [ c ]
   }
-}), function(c) {
-  return c.colorName;
 });
 
 Meteor.lumiere = Meteor.lumiere || {};
