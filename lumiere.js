@@ -340,15 +340,19 @@ if (Meteor.isServer) {
         var noCommas = [];
         var onlySpaces = [];
         var found, onlySpacesWorks;
+        input = input.trim();
+
 
         // If no commas found, try to find words in the input and insert
         // commas.
+        //
+        // There is also the issue of a single hex color
         //
         // First we see if we can find each color separated by a space,
         // but if that doesn't work, the we try the more verbose way,
         // which is to replace each color we find with its index and then
         // put back together, using a list of colors ordered by length
-        if (input.indexOf(',') === -1) {
+        if (input.indexOf(',') === -1 && input.indexOf('#') !== 0) {
           // Try the simple approach
           onlySpacesWorks = true
           _.each(input.trim().replace(/\W/g, ' ').toLowerCase().split(' '), function(s, si) {
