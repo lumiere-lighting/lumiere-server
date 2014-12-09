@@ -405,6 +405,12 @@ if (Meteor.isServer) {
           }
         });
 
+        // The final thing we want to do is make sure that the input is
+        // not all black.  Black is valid if between other colors.
+        if (_.uniq(colors).length === 1 && _.uniq(colors)[0] === '#000000') {
+          colors = [];
+        }
+
         return {
           input: inputs.join(','),
           colors: colors
