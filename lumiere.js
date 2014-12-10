@@ -119,11 +119,6 @@ if (Meteor.isClient) {
     });
   };
 
-  // About sections
-  Template.about.helpers({
-    settings: Meteor.settings
-  });
-
   // Color input
   Template.input.helpers({
     inputColors: function() {
@@ -243,6 +238,11 @@ if (Meteor.isClient) {
           }
         });
     }
+  });
+
+  // About sections
+  Template.about.helpers({
+    settings: Meteor.settings
   });
 }
 
@@ -634,7 +634,32 @@ Router.route('outgoing-colors', {
 
 
 
-// Iron router needs a default route
+
+// Handle visual routes.  Set default template.
+Router.configure({
+  layoutTemplate: 'layout'
+});
+
+// Router does not go back to top when switching pages, so this
+// hacks around it
+Router._filters = {
+  resetScroll: function () {
+    var scrollTo = window.currentScroll || 0;
+    $('html, body').animate({ scrollTop: scrollTo }, 300);
+    $('body').css('min-height', 0);
+  }
+};
+
+if (Meteor.isClient) {
+  Router.onAfterAction(Router._filters.resetScroll);
+}
+
+// About page
+Router.route('about', {
+  path: '/about'
+});
+
+// Default route is home
 Router.route('home', {
   path: '*'
 });

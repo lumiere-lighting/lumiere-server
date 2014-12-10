@@ -1,9 +1,7 @@
 <head>
   <title>Lumière</title>
 
-  <link href='http://fonts.googleapis.com/css?family=Monsieur+La+Doulaise' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
-
+  <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,700|Monsieur+La+Doulaise|Varela+Round" rel="stylesheet" type="text/css">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="/apple-touch-icon-precomposed.png" />
@@ -14,39 +12,25 @@
 
 <!-- Main body output -->
 <body>
+</body>
+
+
+<!-- Main layout -->
+<template name="layout">
   <div class="app-container">
     <div class="center-container">
       {{> header}}
     </div>
 
-    <div class="full-container">
-      {{> lights}}
-    </div>
-
+    {{> yield}}
 
     <div class="center-container">
-      <div class="spacer short-top"></div>
-
-      {{> input}}
-
-      <div class="spacer"></div>
-
-      {{> about}}
-
-      <div class="spacer"></div>
-
-      {{> nodes}}
-
-      <div class="spacer"></div>
-
-      {{> credits}}
+      <div class="footer">
+        <a href="/">Lights</a>
+        <a href="/about">About</a>
+      </div>
     </div>
   </div>
-</body>
-
-
-<!-- An empty template for iron-router -->
-<template name="home">
 </template>
 
 
@@ -59,6 +43,99 @@
       <h1>{{ name }}</h1>
       <h2>Community controlled lighting</h2>
     </div>
+  </div>
+</template>
+
+
+<!-- Default route for iron-router -->
+<template name="home">
+
+  <div class="full-container">
+    {{> lights}}
+  </div>
+
+  <div class="center-container">
+    <div class="spacer short-top"></div>
+
+    {{> input}}
+
+    <!--
+    <div class="spacer"></div>
+
+    <ul>
+      <li>Use this website.</li>
+      {{#if settings.phone}}
+      <li>Text (SMS) colors to <strong class="phone"><code>{{ settings.phone }}</code></strong>.</li>
+      {{/if}}
+      {{#if settings.twitterFilter}}
+      <li>Tweet colors to
+        <strong class="phone">
+          {{#each settings.twitterFilter}}
+          <code>#{{.}}</code>
+          {{/each}}
+        </strong>.
+      </li>
+      {{/if}}
+      {{#if settings.yoUser}}
+      <li>Yo at <strong class="phone"><code>{{ settings.yoUser }}</code></strong>.</li>
+      {{/if}}
+    </ul>
+    -->
+  </div>
+</template>
+
+
+<!-- About page -->
+<template name="about">
+  <div class="center-container about-page">
+    <h3>About</h3>
+
+    <p>{{ settings.name }} is an instance of <strong>Lumière</strong>, <em>community-controlled lighting</em>.  Lumière invites anyone in the world to change the colors of (your) holiday lights.  There are lots of ways to change the lights such as texting or Tweeting, and over 1,000 different names of colors to use.</p>
+
+    <h3>Colors</h3>
+
+    <p>Color words are a combination of
+      <a href="https://github.com/gka/chroma.js/blob/master/src/colors/w3cx11.coffee" target="_blank">Chroma.js</a>,
+      <a href="https://github.com/gka/chroma.js/blob/master/src/colors/colorbrewer.coffee" target="_blank">Colorbrewer</a>,
+      <a href="http://chir.ag/projects/name-that-color/" target="_blank">Name that Color</a>,
+      <a href="http://en.wikipedia.org/wiki/List_of_Crayola_crayon_colors" target="_blank">Crayola Crayons</a> (some),
+      and some custom ones.
+      Feel free to <a href="https://github.com/lumiere-lighting/lumiere-server/issues" target="_blank">suggest</a> some more.</p>
+
+    <p>When using text inputs for colors, you can make combinations in a number of ways.  By using a comma to separate colors, you will get the most accurate colors:</p>
+
+    <ul>
+      <li><code>red blue green</code></li>
+      <li><code>magenta, lemon yellow, cyan</code></li>
+      <li><code>bluegreen green</code></li>
+    </ul>
+
+    {{#if settings.showPress}}
+      <h3>Press</h3>
+
+      <p>In the winter of 2015, Lumière was used on a <a href="http://www.cityofboston.gov/holidays/wickedcooltree.asp" target="_blank">Christmas tree in Boston City Hall</a>.  This mentioned in a number of stories in places like
+        <a href="http://bostinno.streetwise.co/2014/12/09/boston-tree-lighting-wickedcooltree-installed-in-city-hall/" target="_blank">Streetwise</a>,
+        <a href="http://www.boston.com/news/local/massachusetts/2014/12/09/your-tweets-can-light-city-hall-wicked-cool-tree/eZkCE1nCLHJgssO1voWQ0K/story.html" target="_blank">Boston Globe</a>,
+        <a href="http://www.bostonherald.com/news_opinion/local_coverage/2014/12/o_christmas_tweets" target="_blank">Boston Herald</a>, and
+        <a href="http://www.myfoxboston.com/story/27588766/wicked-cool-tree-allows-users-to-change-lights-on-bostons-tree" target="_blank">Fox Boston</a>.</p>
+    {{/if}}
+
+    <h3>Make your own lights</h3>
+
+    <p>Lumière lights are currently <abbr title="Do-it-yourself">DIY</abbr>; this means you have to get a hold of some hardware, put it together yourself, and then hook it up to the Lumière system.  Basically you need a string of programmable lights and an internet-connected device like an Arduino or Raspberry-Pi.  It takes some technical know-how, but checkout our <a href="https://github.com/lumiere-lighting" target="_blank">repository of code and instructions</a> for different node configurations.</p>
+
+    <p>Maybe one day we will have a kit package for your to purchase or even just a full-fledged {{ name }} product.  We'll let you know if that happens.</p>
+
+    <p>Lumière is architected in such a way that multiple light installations can talk to one server, therefore a whole neighborhood could change with one text message.</p>
+
+    <h3>Run your own server</h3>
+
+    <p>If you want your lights to be connected to the default Lumière server, then there's no need to set up your own server, just your own lights.  But, if you want to make a custom installation and server, checkout the <a href="https://github.com/lumiere-lighting/lumiere-server" target="_blank">Lumière server code</a> to get up and running.</p>
+
+    <h3>Open to all</h3>
+
+    <p>This <a href="https://github.com/lumiere-lighting" target="_blank">project is open source</a> and you are welcome to use the code freely or help improve it.</p>
+
   </div>
 </template>
 
@@ -101,59 +178,5 @@
       <li class="save-input" title="Set lights to these colors">&#10003;</li>
     </ul>
     <div class="color-picker"></div>
-  </div>
-</template>
-
-
-<!-- About section -->
-<template name="about">
-  <div class="about">
-    <h3>About</h3>
-
-    <p><strong>{{ name }}</strong> is an experiment in holiday lighting and community engagement.  {{ name }} invites anyone in the world to change the colors of (your) holiday lights.  There are lots of ways to change the colors, though it may take a few seconds for the changes to show.</p>
-
-    <ul>
-      <li>Use this website.</li>
-      {{#if settings.phone}}
-        <li>Text (SMS) colors to <strong class="phone"><code>{{ settings.phone }}</code></strong>.</li>
-      {{/if}}
-      {{#if settings.twitterFilter}}
-        <li>Tweet colors to
-          <strong class="phone">
-            {{#each settings.twitterFilter}}
-              <code>#{{.}}</code>
-            {{/each}}
-          </strong>.
-        </li>
-      {{/if}}
-      {{#if settings.yoUser}}
-        <li>Yo at <strong class="phone"><code>{{ settings.yoUser }}</code></strong>.</li>
-      {{/if}}
-    </ul>
-  </div>
-</template>
-
-
-<!-- Nodes section -->
-<template name="nodes">
-  <div class="nodes">
-    <h3>Make your own lights</h3>
-
-    <p>{{ name }} lights are currently <abbr title="Do-it-yourself">DIY</abbr>; this means you have to get a hold of some hardware, put it together yourself, and then hook it up to the {{ name }} system.  Basically you need a string of programmable lights and an internet-connected device like an Arduino or Raspberry-Pi.  It takes some technical know-how, but checkout our <a href="https://github.com/lumiere-lighting" target="_blank">repository of code and instructions</a> for different node configurations.</p>
-
-    <p>Maybe one day we will have a kit package for your to purchase or even just a full-fledged {{ name }} product.  We'll let you know if that happens.</p>
-  </div>
-</template>
-
-
-<!-- Credits section -->
-<template name="credits">
-  <div class="credits">
-
-    <h3>Credits</h3>
-
-    <p>Color words are a combination of <a href="https://github.com/gka/chroma.js/blob/master/src/colors/w3cx11.coffee" target="_blank">Chroma.js</a>, <a href="https://github.com/gka/chroma.js/blob/master/src/colors/colorbrewer.coffee" target="_blank">Colorbrewer</a>, <a href="http://chir.ag/projects/name-that-color/" target="_blank">Name that Color</a>, <a href="http://en.wikipedia.org/wiki/List_of_Crayola_crayon_colors" target="_blank">Crayola Crayons</a>, and some custom ones.  Feel free to <a href="https://github.com/lumiere-lighting/lumiere-server/issues" target="_blank">suggest</a> some more.</p>
-
-    <p>This <a href="https://github.com/lumiere-lighting/lumiere-server" target="_blank">project is open source</a> and you are welcome to use the code freely or help improve it.</p>
   </div>
 </template>
