@@ -8,14 +8,13 @@ var chroma, Twitter, twitter, profanity, profanityList, profanityRegex, purify, 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
 
-// Allow a settings file to override defaults
-Meteor.settings = _.extend({
-  'name': 'Lumière',
-  'phone': '+1 651 400 1501',
-  'lights': 10,
-  'twitterFilter': ['lumierebot']
-}, Meteor.settings);
-
+// Allow a settings file to override defaults, _.extend does not
+// do deep
+Meteor.settings = Meteor.settings || {};
+Meteor.settings.public = _.extend({}, {
+  name: 'Lumière',
+  lights: 10
+}, Meteor.settings.public);
 
 // Shared objects across client and server.
 // Meteor.lumiere.colors comes in from colors.js
@@ -41,6 +40,12 @@ Meteor.lumiere.fillColor = function(color) {
 // as Meteor ends up rerendering everything when
 // one value is updated and can be very slow.
 if (Meteor.isClient) {
+  // Meteor settings has a specifcal "public attribute" for the client
+  // and why make extra work for ourselves
+  if (_.isObject(Meteor.settings)) {
+    Meteor.settings = Meteor.settings.public;
+  }
+
   // Subscribe to specific data view
   Meteor.subscribe('colors-recent');
 
@@ -52,6 +57,10 @@ if (Meteor.isClient) {
     },
     name: Meteor.settings.name
   });
+  // Set title of page
+  Template.header.rendered = function() {
+    document.title = Meteor.settings.name;
+  };
 
   // The current selection of lights
   Template.lights.helpers({
@@ -112,8 +121,7 @@ if (Meteor.isClient) {
 
   // About sections
   Template.about.helpers({
-    phone: Meteor.settings.phone,
-    name: Meteor.settings.name
+    settings: Meteor.settings
   });
 
   // Color input

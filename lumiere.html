@@ -114,9 +114,21 @@
 
     <ul>
       <li>Use this website.</li>
-      <li>Text (SMS) colors to <strong class="phone"><code>{{ phone }}</code></strong>.</li>
-      <li>Tweet colors to <strong class="phone"><code>#lumiereBot</code></strong>.</li>
-      <li>Yo at <strong class="phone"><code>LUMIEREBOT</code></strong>.</li>
+      {{#if settings.phone}}
+        <li>Text (SMS) colors to <strong class="phone"><code>{{ settings.phone }}</code></strong>.</li>
+      {{/if}}
+      {{#if settings.twitterFilter}}
+        <li>Tweet colors to
+          <strong class="phone">
+            {{#each settings.twitterFilter}}
+              <code>#{{.}}</code>
+            {{/each}}
+          </strong>.
+        </li>
+      {{/if}}
+      {{#if settings.yoUser}}
+        <li>Yo at <strong class="phone"><code>{{ settings.yoUser }}</code></strong>.</li>
+      {{/if}}
     </ul>
   </div>
 </template>

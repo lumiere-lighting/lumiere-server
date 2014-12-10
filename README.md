@@ -52,19 +52,35 @@ Use the `twitterFilter` value in the settings to filter what keywords will trigg
 
 ### Settings
 
-For sensitive data like autehntication tokens or to override some of the configuration by, use a [Meteor settings](http://docs.meteor.com/#meteor_settings) file, which can be an arbitrary JSON file.  The default values are the following:
+For config and sensitive data like authentication tokens or to override some of the configuration by, use a [Meteor settings](http://docs.meteor.com/#meteor_settings) file, which can be an arbitrary JSON file.  The options are the following; only a couple are provided by default
 
     {
-      "name": "Lumière",
-      "phone": "+1 651 400 1501",
-      "lights": 160,
-      "twitterFilter": ["lumierebot"],
+      // Note that anything in public will be available on the client
+      "public": {
+        // Name of application, provided by default
+        "name": "Lumière",
+        // Number of lights to display in the web interface, provided by
+        // default
+        "lights": 10,
+        // Phone to use for Twilio integration, this is just for output,
+        // integration will still be available without this
+        "phone": "+1 651 400 1501",
+        // Array of keywords to listen to from Twitter (optional), this and
+        // twitter auth are needed for twitter integration
+        "twitterFilter": [ "lumierebot" ],
+        // Account that someone should Yo to as set up above (optional),
+        // this is just for display purposes
+        "yoAuth": "LUMIEREBOT"
+      },
+      // Twitter auth keys (optional)
       "twitterAuth": {
         "consumer_key": "xxx",
         "consumer_secret": "xxx",
         "access_token_key": "xxx",
         "access_token_secret": "xxx"
       },
+      // Yo auth key (optional), allows for a Yo account to Yo back when
+      // someone Yo's to the account you set up above.
       "yoAuth": "xxxx"
     }
 
