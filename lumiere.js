@@ -454,8 +454,8 @@ if (Meteor.isServer) {
 
 
 // Twitter streaming input handling
-if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.twitterFilter) {
-  twitter.stream('filter', { track: Meteor.settings.twitterFilter }, function(stream) {
+if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.public && Meteor.settings.public.twitterFilter) {
+  twitter.stream('filter', { track: Meteor.settings.public.twitterFilter }, function(stream) {
     // Since we are out of the context of Meteor and Fiber, we have to wrap
     // this.
     stream.on('data', Meteor.bindEnvironment(function(data) {
