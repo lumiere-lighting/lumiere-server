@@ -343,6 +343,89 @@ ul.color-inputs li.save-input {
 }
 
 
+/* Sign page */
+body.sign-page {
+  background: #FFFFFF;
+  color: #212125;
+  font-size: 1em;
+  text-align: center;
+}
+
+.sign-page .app-container {
+  padding: 0.5em;
+  margin: 0;
+}
+
+.sign-page .footer,
+.sign-page .status-indicator,
+.sign-page .title-container {
+  display: none;
+}
+
+.sign-page .change-lights {
+  font-size: 7em;
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0 0 0.1em 0;
+}
+
+.sign-page .color-examples {
+  font-size: 2.5em;
+  margin-bottom: 2em;
+}
+
+
+.sign-page .color-examples .color-example {
+  font-weight: bold;
+}
+.sign-page .color-examples .color-example.red { color: red }
+.sign-page .color-examples .color-example.blue { color: blue }
+.sign-page .color-examples .color-example.green { color: green }
+.sign-page .color-examples .color-example.magenta { color: #ff00ff }
+.sign-page .color-examples .color-example.shamrock { color: #33CC99 }
+.sign-page .color-examples .color-example.skyblue { color: #76D7EA }
+.sign-page .color-examples .color-example.santa { color: red }
+.sign-page .color-examples .color-example.hanukkah { color: #0000ff }
+.sign-page .color-examples .color-example.hanukkah2 { color: #c0c0c0 }
+.sign-page .color-examples .color-example.rainbow1 { color: red }
+.sign-page .color-examples .color-example.rainbow2 { color: orange }
+.sign-page .color-examples .color-example.rainbow3 { color: yellow }
+.sign-page .color-examples .color-example.rainbow4 { color: green }
+.sign-page .color-examples .color-example.rainbow5 { color: blue }
+.sign-page .color-examples .color-example.rainbow6 { color: indigo }
+.sign-page .color-examples .color-example.rainbow7 { color: violet }
+
+.sign-page .sign-service {
+  width: 33.33332%;
+  float: left;
+  font-size: 2em;
+}
+
+.sign-page .sign-service img {
+  max-height: 4em;
+}
+
+.sign-page .sign-service .yo-logo {
+  height: 2em;
+  width: 2em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.sign-page .sign-service code {
+  font-weight: bold;
+  font-size: 1.8em;
+}
+
+.sign-page .sign-footer {
+  font-size: 1.25em;
+  padding-top: 3em;
+}
+
+.sign-page .sign-footer code {
+  font-weight: bold;
+}
+
 @media screen and (max-width: 500px) {
 
   .title-container h1,

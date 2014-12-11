@@ -215,3 +215,61 @@
     <button id="color-input-submit">Submit</button>
   </form>
 </template>
+
+
+<!-- Sign page -->
+<template name="sign">
+  <div class="sign-container">
+    <h2 class="change-lights">Change our lights!</h2>
+
+    <div class="color-examples">
+      Send colors like
+        <span class="color-example red">red</span> or
+        <span class="color-example blue">blue</span> or
+        <span class="color-example green">green</span> or
+        <em>multiple colors</em> like
+        "<span class="color-example magenta">magenta</span>,
+        <span class="color-example shamrock">shamrock</span>,
+        <span class="color-example skyblue">sky blue</span>"
+        or <em>special sets</em> like
+        <span class="color-example rainbow1">r</span><span class="color-example rainbow2">a</span><span class="color-example rainbow3">i</span><span class="color-example rainbow4">n</span><span class="color-example rainbow5">b</span><span class="color-example rainbow6">o</span><span class="color-example rainbow7">w</span>
+        or
+        <span class="color-example hanukkah">hanu</span><span class="color-example hanukkah2">kkah</span>
+    </div>
+
+    <div class="cf">
+      <div class="sign-service">
+        <img src="/noun_47176_cc-texting-black.png" />
+        <div class="service-description">
+          Text (SMS) colors to: <br>
+          <code class="service-value">{{ settings.phone }}</code>
+        </div>
+      </div>
+
+      <div class="sign-service">
+        <img src="/noun_49609_cc-twitter-black.png" />
+        <div class="service-description">
+          Tweet colors with hashtags: <br>
+          {{#each addIndex settings.twitterFilter}}
+          <code class="service-value">#{{ value }}</code>
+          {{#if last}}{{else}} or {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="sign-service">
+        <div class="yo-logo"></div>
+        <div class="service-description">
+          Yo at this user: <br>
+          <code class="service-value">{{ settings.yoUser }}</code>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sign-footer">
+      Over 1,000+ color words to choose from.  More details at <code>lumiere.lighting</code>
+    </div>
+
+  </div>
+</template>

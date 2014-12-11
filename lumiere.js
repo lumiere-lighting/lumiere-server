@@ -283,6 +283,14 @@ if (Meteor.isClient) {
   Template.about.helpers({
     settings: Meteor.settings
   });
+
+  // Sign page
+  Template.sign.helpers({
+    settings: Meteor.settings
+  });
+  Template.sign.rendered = function() {
+    $('body').addClass('sign-page');
+  };
 }
 
 
@@ -696,6 +704,13 @@ if (Meteor.isClient) {
 // About page
 Router.route('about', {
   path: '/about'
+});
+
+// About page
+Router.route('sign', {
+  path: '/sign'
+}, function() {
+  this.template('');
 });
 
 // Default route is home
