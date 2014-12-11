@@ -49,6 +49,18 @@ if (Meteor.isClient) {
   // Subscribe to specific data view
   Meteor.subscribe('colors-recent');
 
+  // Change array into array of objects with index
+  UI.registerHelper('addIndex', function(arr) {
+    return _.map(arr, function(val, index) {
+      return {
+        index: index,
+        value: val,
+        first: (index === 0) ? true : false,
+        last: (index === arr.length - 1) ? true : false
+      };
+    });
+  });
+
   // Status allows for a simple icon to show if the client
   // is connected to the server
   Template.header.helpers({
@@ -262,7 +274,12 @@ if (Meteor.isClient) {
     }
   });
 
-  // About sections
+  // Home page
+  Template.home.helpers({
+    settings: Meteor.settings
+  });
+
+  // About page
   Template.about.helpers({
     settings: Meteor.settings
   });

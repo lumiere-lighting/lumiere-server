@@ -92,3 +92,8 @@ You can deploy to Meteors architecture for free.
 
 1. Deploy to Meteor.com: `meteor deploy <YOUR_APP_NAME>.meteor.com`
     * Or if you have your settings file: `meteor deploy --settings=settings.json <YOUR_APP_NAME>.meteor.com`
+
+## Credit
+
+* [Texting icon by baabullah hasan](http://thenounproject.com/term/texting/47176/)
+* [Twitter icon by Housin Aziz](http://thenounproject.com/term/twitter/49609/)

@@ -311,6 +311,38 @@ ul.color-inputs li.save-input {
 }
 
 
+/* Extenal input sections */
+.external-input .service-icon,
+.external-input .service-description {
+  width: 50%;
+  float: left;
+  text-align: center;
+  font-size: 0.85em;
+  min-height: 0.5em;
+}
+
+.external-input .service-icon img {
+  max-height: 8em;
+}
+
+.external-input .service-description {
+  padding-top: 2em;
+}
+
+.external-input .service-value {
+  font-size: 1.5em;
+  color: #F5B800;
+}
+
+.yo-logo {
+  background-color: #9B59B6;
+  border-radius: 7px;
+  width: 7em;
+  height: 7em;
+  display: inline-block;
+}
+
+
 @media screen and (max-width: 500px) {
 
   .title-container h1,

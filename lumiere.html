@@ -63,26 +63,50 @@
 
     {{> textInput }}
 
-    <!--
-    <ul>
-      <li>Use this website.</li>
-      {{#if settings.phone}}
-      <li>Text (SMS) colors to <strong class="phone"><code>{{ settings.phone }}</code></strong>.</li>
-      {{/if}}
-      {{#if settings.twitterFilter}}
-      <li>Tweet colors to
-        <strong class="phone">
-          {{#each settings.twitterFilter}}
-          <code>#{{.}}</code>
+    {{#if settings.phone}}
+      <div class="spacer"></div>
+
+      <div class="external-input cf">
+        <div class="service-icon sms">
+          <img src="/noun_47176_cc-texting-white.png" />
+        </div>
+        <div class="service-description">
+          Text (SMS) colors to: <br>
+          <code class="service-value">{{ settings.phone }}</code>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if settings.twitterFilter}}
+      <div class="spacer"></div>
+
+      <div class="external-input cf">
+        <div class="service-icon twitter">
+          <img src="/noun_49609_cc-twitter-white.png" />
+        </div>
+        <div class="service-description">
+          Tweet colors with hashtags: <br>
+          {{#each addIndex settings.twitterFilter}}
+            <code class="service-value">#{{ value }}</code>
+            {{#if last}}{{else}} or {{/if}}
           {{/each}}
-        </strong>.
-      </li>
-      {{/if}}
-      {{#if settings.yoUser}}
-      <li>Yo at <strong class="phone"><code>{{ settings.yoUser }}</code></strong>.</li>
-      {{/if}}
-    </ul>
-    -->
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if settings.yoUser}}
+      <div class="spacer"></div>
+
+      <div class="external-input cf">
+        <div class="service-icon yo">
+          <div class="yo-logo"></div>
+        </div>
+        <div class="service-description">
+          Yo at user: <br>
+          <code class="service-value">{{ settings.yoUser }}</code>
+        </div>
+      </div>
+    {{/if}}
   </div>
 </template>
 
