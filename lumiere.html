@@ -57,11 +57,13 @@
   <div class="center-container">
     <div class="spacer short-top"></div>
 
-    {{> input}}
+    {{> colorpicker}}
 
-    <!--
     <div class="spacer"></div>
 
+    {{> textInput }}
+
+    <!--
     <ul>
       <li>Use this website.</li>
       {{#if settings.phone}}
@@ -132,6 +134,7 @@
       <a href="http://bostinno.streetwise.co/2014/12/09/boston-tree-lighting-wickedcooltree-installed-in-city-hall/" target="_blank">Streetwise</a>,
       <a href="http://www.boston.com/news/local/massachusetts/2014/12/09/your-tweets-can-light-city-hall-wicked-cool-tree/eZkCE1nCLHJgssO1voWQ0K/story.html" target="_blank">Boston Globe</a>,
       <a href="http://betaboston.com/news/2014/12/10/boston-city-halls-wickedcooltree-changes-colors-via-tweets/?hootPostID=4a2e63d83bf5b08532d07781cd9192be" target="_blank">Beta Boston</a>,
+      <a href="http://www.whdh.com/story/27598242/boston-wicked-cool-tree" target="_blank">Boston News 7</a>,
       <a href="http://www.bostonherald.com/news_opinion/local_coverage/2014/12/o_christmas_tweets" target="_blank">Boston Herald</a>, and
       <a href="http://www.myfoxboston.com/story/27588766/wicked-cool-tree-allows-users-to-change-lights-on-bostons-tree" target="_blank">Fox Boston</a>.</p>
 
@@ -163,8 +166,8 @@
 </template>
 
 
-<!-- Input template for input of colors -->
-<template name="input">
+<!-- Colorpicker template for input of colors -->
+<template name="colorpicker">
   <div class="color-input-container">
     <ul class="color-inputs">
       {{#each inputColors}}
@@ -178,4 +181,13 @@
     </ul>
     <div class="color-picker"></div>
   </div>
+</template>
+
+
+<!-- Text template for input of colors -->
+<template name="textInput">
+  <form class="text-input-form">
+    <input id="color-input-text" placeholder="Enter list of colors" />
+    <button id="color-input-submit">Submit</button>
+  </form>
 </template>

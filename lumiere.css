@@ -121,6 +121,7 @@ h3 {
   padding-top: 1em;
 }
 
+/* Header */
 .status-indicator {
   position: fixed;
   bottom: 0;
@@ -141,6 +142,7 @@ h3 {
   background-color: #66FF33;
 }
 
+/* Light output */
 #color-output-canvas-container {
   width: 100%;
   margin-bottom: 2em;
@@ -182,17 +184,8 @@ h3 {
   text-align: center;
 }
 
-.color-queue-item {
-  width: 1em;
-  height: 1em;
-  margin: 0 1em 1em 0;
-  float: left;
-}
 
-.color-input-container form {
-  padding: 0 1em;
-}
-
+/* About page */
 .about {
   margin-bottom: 2em;
 }
@@ -201,37 +194,8 @@ h3 {
   color: #F5B800;
 }
 
-#color-input-text {
-  border: transparent;
-  background-color: #FBFBFB;
-  width: 80%;
-  padding: .25em .5em;
-  margin-bottom: .5em;
-  resize: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-border-radius: .2em;
-  -moz-border-radius: .2em;
-  border-radius: .2em;
-  color: #212125;
-}
 
-#color-input-submit {
-  background-color: #FBFBFB;
-  border: .1em solid #FFFFFF;
-  margin-bottom: 1em;
-  -webkit-border-radius: .2em;
-  -moz-border-radius: .2em;
-  border-radius: .2em;
-  color: #212125;
-}
-
-#color-input-submit:hover {
-  color: #FFFFFF;
-  background-color: #212125;
-}
-
+/* Colorpicker input */
 .color-picker {
   width: 80%;
   margin: 0 auto;
@@ -286,7 +250,7 @@ ul.color-inputs li.save-input {
 
 
 
-
+/* Responsive sizes */
 @media screen and (max-width: 720px) {
   body {
     font-size: 1.25em;
@@ -311,6 +275,39 @@ ul.color-inputs li.save-input {
   #color-output-canvas .output-light {
     height: 12em;
   }
+}
+
+
+/* Text input */
+#color-input-text {
+  border: transparent;
+  background-color: #FBFBFB;
+  width: 80%;
+  padding: .25em .5em;
+  margin-bottom: .5em;
+  resize: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: .2em;
+  -moz-border-radius: .2em;
+  border-radius: .2em;
+  color: #212125;
+}
+
+#color-input-submit {
+  background-color: #FBFBFB;
+  border: .1em solid #FFFFFF;
+  margin-bottom: 1em;
+  -webkit-border-radius: .2em;
+  -moz-border-radius: .2em;
+  border-radius: .2em;
+  color: #212125;
+}
+
+#color-input-submit:hover {
+  color: #FFFFFF;
+  background-color: #212125;
 }
 
 

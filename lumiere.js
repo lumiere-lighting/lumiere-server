@@ -119,8 +119,8 @@ if (Meteor.isClient) {
     });
   };
 
-  // Color input
-  Template.input.helpers({
+  // Colorpicker input
+  Template.colorpicker.helpers({
     inputColors: function() {
       var inputs = Session.get('input');
 
@@ -145,7 +145,7 @@ if (Meteor.isClient) {
   });
 
   // When done rendered
-  Template.input.rendered = function() {
+  Template.colorpicker.rendered = function() {
     var $picker = $('.color-picker');
     var $inputs = $('.color-inputs');
     var defaultColor = '#1b26f7';
@@ -177,7 +177,7 @@ if (Meteor.isClient) {
   };
 
   // Events handled in the input template.
-  Template.input.events({
+  Template.colorpicker.events({
     // Add another color
     'click .add-another': function(e) {
       e.preventDefault();
@@ -237,6 +237,28 @@ if (Meteor.isClient) {
             Session.set('input', undefined);
           }
         });
+    }
+  });
+
+  // Textinput
+  Template.textInput.events({
+    'submit .text-input-form': function(e) {
+      e.preventDefault();
+      var val = $('#color-input-text').val();
+
+      // Save
+      if (val) {
+        Meteor.call('addColor', val, { source: 'the Web Text' },
+          function(error, response) {
+            if (error) {
+              throw new error;
+            }
+            else {
+              // Reset input
+              $('#color-input-text').val('');
+            }
+          });
+      }
     }
   });
 
