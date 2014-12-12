@@ -291,6 +291,11 @@ if (Meteor.isClient) {
   Template.sign.rendered = function() {
     $('body').addClass('sign-page');
   };
+
+  // The other pages keep the body class
+  Template.home.rendered = Template.about.rendered = function() {
+    $('body').removeClass('sign-page');
+  };
 }
 
 
