@@ -595,7 +595,7 @@ Router.route('incoming-twilio', {
     this.response.writeHead(200, {
       'Content-Type': 'text/xml'
     });
-    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + response + ' -' + Meteor.settings.name + '</Sms> </Response>\n');
+    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + response + ' -' + Meteor.settings.public.name + '</Sms> </Response>\n');
   }
 });
 
