@@ -70,7 +70,7 @@ For config and sensitive data like authentication tokens or to override some of 
         "twitterFilter": [ "lumierebot" ],
         // Account that someone should Yo to as set up above (optional),
         // this is just for display purposes
-        "yoAuth": "LUMIEREBOT"
+        "yoUser": "LUMIEREBOT"
       },
       // Twitter auth keys (optional)
       "twitterAuth": {
