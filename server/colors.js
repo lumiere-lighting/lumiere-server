@@ -9,6 +9,7 @@
  */
 var colors = {
   // Custom colors
+  usa: ['red', 'white', 'blue'],
   rainbow: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'],
   santa: ['red', 'white'],
   candycane: ['red', 'white', 'green'],
@@ -19,6 +20,14 @@ var colors = {
   menorah: ['white', 'white', 'white', 'white', 'white', 'white', 'white', 'white', 'white', 'black'],
   frosty: ['white', 'white', 'white', 'orange'],
   kwanzaa: ['green', 'green', 'green', '#3C2005', 'red', 'red', 'red'],
+  goodfellow: ['#FF0080'],
+  chacha: ['#FFF44F'],
+  greenline: ['#00ff00'],
+  redline: ['#ff0000'],
+  blueline: ['#0000ff'],
+  mechanics: ['blue', 'white'],
+  arts: ['hotpink', 'white'],
+  streetlight: ['red', 'yellow', 'green'],
 
   // Chroma colors
   // X11 color names http://www.w3.org/TR/css3-color/#svg-color
