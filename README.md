@@ -52,7 +52,7 @@ Use the `twitterFilter` value in the settings to filter what keywords will trigg
 
 ### Settings
 
-For config and sensitive data like authentication tokens or to override some of the configuration by, use a [Meteor settings](http://docs.meteor.com/#meteor_settings) file, which can be an arbitrary JSON file.  The options are the following; only a couple are provided by default
+For config and sensitive data like authentication tokens or to override some of the configuration by, use a [Meteor settings](http://docs.meteor.com/api/core.html#Meteor-settings) file, which can be an arbitrary JSON file, or set as the `METEOR_SETTINGS` environment variable.  The options are the following; only a couple are provided by default
 
     {
       // Note that anything in public will be available on the client
