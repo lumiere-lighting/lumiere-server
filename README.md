@@ -42,6 +42,8 @@ These instructions are for using Twilio, but it would not be too hard to change 
 
 ### Yo integration
 
+*Deprecated; Yo changed how their API works, and it doesn't look like Yo is actively worked on.*
+
 Make a Yo account and set up the [Yo API](http://dev.justyo.co/) to post to `http://<YOUR URL>/api/colors/yo`.  If you want the account to Yo back then make sure to add your Yo API key in the settings (see below) in the `yoAuth` value.
 
 ### Twitter integration
@@ -78,10 +80,7 @@ For config and sensitive data like authentication tokens or to override some of 
         "consumer_secret": "xxx",
         "access_token_key": "xxx",
         "access_token_secret": "xxx"
-      },
-      // Yo auth key (optional), allows for a Yo account to Yo back when
-      // someone Yo's to the account you set up above.
-      "yoAuth": "xxxx"
+      }
     }
 
 Make sure to use `meteor --settings=settings.json` and `meteor deploy --settings=settings.json` respectively.
