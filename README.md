@@ -69,10 +69,7 @@ For config and sensitive data like authentication tokens or to override some of 
         "phone": "+1 651 400 1501",
         // Array of keywords to listen to from Twitter (optional), this and
         // twitter auth are needed for twitter integration
-        "twitterFilter": [ "lumierebot" ],
-        // Account that someone should Yo to as set up above (optional),
-        // this is just for display purposes
-        "yoUser": "LUMIEREBOT"
+        "twitterFilter": [ "lumierebot" ]
       },
       // Twitter auth keys (optional)
       "twitterAuth": {
@@ -87,10 +84,22 @@ Make sure to use `meteor --settings=settings.json` and `meteor deploy --settings
 
 ### Deploy
 
-You can deploy to Meteors architecture for free.
+You can deploy to Meteors architecture, Galaxy, which is $0.04/hr for its base
 
 1. Deploy to Meteor.com: `meteor deploy <YOUR_APP_NAME>.meteor.com`
     * Or if you have your settings file: `meteor deploy --settings=settings.json <YOUR_APP_NAME>.meteor.com`
+
+### Heroku
+
+You can run this application on Heroku, which has a free tier that is limited.  [This article](https://medium.com/@leonardykris/how-to-run-a-meteor-js-application-on-heroku-in-10-steps-7aceb12de234) how to deploy on Heroku, but here are a few key steps:
+
+* Create your application: `heroku apps:create <YOUR-APP-NAME>`
+* The key to getting Heroku to build the Meteor app is to use a custom buildpack: `heroku buildpacks:set https://github.com/AdmitHub/meteor-buildpack-horse.git`
+* You'll need mongo: `heroku addons:create mongolab:sandbox`
+* Settings:
+    * Meteor needs a `MONGO_URL` setting, but Mongo URL is set as `MONGODB_URI`; use `heroku config` to see the value and set like: `heroku config:set MONGO_URL=<MONGO_URI value>`
+    * Meteor needs to know about where this is hosted: `heroku config:set ROOT_URL=https://foobar.herokuapp.com`
+    * And finally, to be able to tell Meteor about your settings, you need to set the `METEOR_SETTINGS` config to the whole JSON used for your settings: `heroku config:set METEOR_SETTINGS='{ "thing": 1 }'`
 
 ## Credit
 
