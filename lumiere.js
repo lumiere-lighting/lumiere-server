@@ -3,7 +3,14 @@
  */
 
 // Place hold some variables
-var chroma, Twitter, twitter, profanity, profanityList, profanityRegex, purify, currentID;
+var chroma,
+  Twitter,
+  twitter,
+  profanity,
+  profanityList,
+  profanityRegex,
+  purify,
+  currentID;
 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
@@ -11,10 +18,14 @@ var Colors = new Meteor.Collection('colors');
 // Allow a settings file to override defaults, _.extend does not
 // do deep
 Meteor.settings = Meteor.settings || {};
-Meteor.settings.public = _.extend({}, {
-  name: 'Lumière',
-  lights: 10
-}, Meteor.settings.public);
+Meteor.settings.public = _.extend(
+  {},
+  {
+    name: 'Lumière',
+    lights: 10
+  },
+  Meteor.settings.public
+);
 
 // Shared objects across client and server.
 // Meteor.lumiere.colors comes in from colors.js
@@ -26,7 +37,11 @@ Meteor.lumiere.fillColor = function(color) {
   var i;
 
   // Repeat colors if longer than needed
-  if (!_.isUndefined(color) && _.isObject(color) && color.colors.length < Meteor.settings.lights) {
+  if (
+    !_.isUndefined(color) &&
+    _.isObject(color) &&
+    color.colors.length < Meteor.settings.lights
+  ) {
     for (i = 0; i < Meteor.settings.lights; i++) {
       colors.push(color.colors[i % color.colors.length]);
     }
@@ -34,7 +49,6 @@ Meteor.lumiere.fillColor = function(color) {
   }
   return color;
 };
-
 
 // Client side only.  Multiple templates are used
 // as Meteor ends up rerendering everything when
@@ -55,8 +69,8 @@ if (Meteor.isClient) {
       return {
         index: index,
         value: val,
-        first: (index === 0) ? true : false,
-        last: (index === arr.length - 1) ? true : false
+        first: index === 0 ? true : false,
+        last: index === arr.length - 1 ? true : false
       };
     });
   });
@@ -88,9 +102,9 @@ if (Meteor.isClient) {
       }
 
       // Fill the lights
-      recent =  Meteor.lumiere.fillColor(recent);
+      recent = Meteor.lumiere.fillColor(recent);
       length = recent.colors.length;
-      recent.lightWidth = (length === 0) ? 0 : (100 / length) - 0.00001;
+      recent.lightWidth = length === 0 ? 0 : 100 / length - 0.00001;
 
       // Some inputs are not worth showing
       if (recent.source === 'the Colorpicker') {
@@ -112,21 +126,24 @@ if (Meteor.isClient) {
         // Make sure container is constant height
         //$(container).height($(canvas).height());
 
-        $(window).on('scroll', _.throttle(function(e) {
-          var $container = $(container);
-          var $canvas = $(canvas);
-          var scrollTop = $(window).scrollTop();
-          var stuck = $canvas.hasClass(stuckClass);
-          // Offset a bit so the stuck container seems a bit more smooth
-          var bottom = $container.offset().top + $container.height() - 10;
+        $(window).on(
+          'scroll',
+          _.throttle(function(e) {
+            var $container = $(container);
+            var $canvas = $(canvas);
+            var scrollTop = $(window).scrollTop();
+            var stuck = $canvas.hasClass(stuckClass);
+            // Offset a bit so the stuck container seems a bit more smooth
+            var bottom = $container.offset().top + $container.height() - 10;
 
-          if (!stuck && scrollTop > bottom) {
-            $canvas.addClass(stuckClass);
-          }
-          else if (stuck && scrollTop <= bottom) {
-            $canvas.removeClass(stuckClass);
-          }
-        }, 100));
+            if (!stuck && scrollTop > bottom) {
+              $canvas.addClass(stuckClass);
+            }
+            else if (stuck && scrollTop <= bottom) {
+              $canvas.removeClass(stuckClass);
+            }
+          }, 100)
+        );
       }
     });
   };
@@ -138,15 +155,17 @@ if (Meteor.isClient) {
 
       // If no inputs yet, use default
       if (!inputs || !_.isArray(inputs) || !inputs.length) {
-        inputs = [{
-          color: '#1b26f7'
-        }];
+        inputs = [
+          {
+            color: '#1b26f7'
+          }
+        ];
       }
       // Add index because mustache is stupid
       inputs = _.map(inputs, function(i, ii) {
         return {
           color: i.color,
-          current: (ii == inputs.length - 1) ? true : false,
+          current: ii == inputs.length - 1 ? true : false,
           index: ii
         };
       });
@@ -180,7 +199,8 @@ if (Meteor.isClient) {
         width: $picker.width(),
         palettes: false,
         change: function(e, ui) {
-          $inputs.find('.current-input')
+          $inputs
+            .find('.current-input')
             .css('background-color', ui.color.toString())
             .attr('data-color', ui.color.toString());
         }
@@ -193,7 +213,9 @@ if (Meteor.isClient) {
     // Add another color
     'click .add-another': function(e) {
       e.preventDefault();
-      var color = $('.color-picker').iris('color').toString();
+      var color = $('.color-picker')
+        .iris('color')
+        .toString();
       var inputs = Session.get('input');
       var current = _.findWhere(inputs, { current: true });
 
@@ -212,7 +234,9 @@ if (Meteor.isClient) {
       e.preventDefault();
       var inputs = Session.get('input');
       var current = _.findWhere(inputs, { current: true });
-      var color = $('.color-picker').iris('color').toString();
+      var color = $('.color-picker')
+        .iris('color')
+        .toString();
 
       // Save current first, since we don't do this on every change
       inputs[current.index].color = color;
@@ -229,7 +253,9 @@ if (Meteor.isClient) {
     'click .save-input': function(e) {
       var inputs = Session.get('input');
       var current = _.findWhere(inputs, { current: true });
-      var color = $('.color-picker').iris('color').toString();
+      var color = $('.color-picker')
+        .iris('color')
+        .toString();
       var saveInput;
 
       // Save current first, since we don't do this on every change
@@ -239,16 +265,20 @@ if (Meteor.isClient) {
       saveInput = _.pluck(inputs, 'color').join(',');
 
       // Save
-      Meteor.call('addColor', saveInput, { source: 'the Colorpicker' },
+      Meteor.call(
+        'addColor',
+        saveInput,
+        { source: 'the Colorpicker' },
         function(error, response) {
           if (error) {
-            throw new error;
+            throw new error();
           }
           else {
             // Reset input
             Session.set('input', undefined);
           }
-        });
+        }
+      );
     }
   });
 
@@ -260,16 +290,18 @@ if (Meteor.isClient) {
 
       // Save
       if (val) {
-        Meteor.call('addColor', val, { source: 'the Web Text' },
-          function(error, response) {
-            if (error) {
-              throw new error;
-            }
-            else {
-              // Reset input
-              $('#color-input-text').val('');
-            }
-          });
+        Meteor.call('addColor', val, { source: 'the Web Text' }, function(
+          error,
+          response
+        ) {
+          if (error) {
+            throw new error();
+          }
+          else {
+            // Reset input
+            $('#color-input-text').val('');
+          }
+        });
       }
     }
   });
@@ -298,7 +330,6 @@ if (Meteor.isClient) {
   };
 }
 
-
 // Server side only.  Saving and processing colors.  Mostly we are just adding
 // some methods that can be shared with the client
 if (Meteor.isServer) {
@@ -308,7 +339,7 @@ if (Meteor.isServer) {
   // Profanity util has a good list of words, but does a stupid
   // regex when replacing (takes into account spacing)
   profanityList = Meteor.npmRequire('profanity-util/lib/swearwords.json');
-  profanityRegex =  new RegExp('(' + profanityList.join('|') + ')', 'gi');
+  profanityRegex = new RegExp('(' + profanityList.join('|') + ')', 'gi');
   purify = function(str) {
     return str.replace(profanityRegex, function(val) {
       var str = val.substr(0, 1);
@@ -317,12 +348,15 @@ if (Meteor.isServer) {
       }
       return str + val.substr(-1);
     });
-  }
+  };
 
   // Create an array of color names, and
   Meteor.lumiere.colorNames = _.pluck(Meteor.lumiere.colors, 'colorName');
   // Sort by length for later
-  Meteor.lumiere.colorNamesSorted = _.sortBy(Meteor.lumiere.colorNames, 'length').reverse();
+  Meteor.lumiere.colorNamesSorted = _.sortBy(
+    Meteor.lumiere.colorNames,
+    'length'
+  ).reverse();
 
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
@@ -402,7 +436,6 @@ if (Meteor.isServer) {
         var found, onlySpacesWorks;
         input = input.trim();
 
-
         // If no commas found, try to find words in the input and insert
         // commas.
         //
@@ -414,22 +447,32 @@ if (Meteor.isServer) {
         // put back together, using a list of colors ordered by length
         if (input.indexOf(',') === -1 && input.indexOf('#') !== 0) {
           // Try the simple approach
-          onlySpacesWorks = true
-          _.each(input.trim().replace(/\W/g, ' ').toLowerCase().split(' '), function(s, si) {
-            if (Meteor.lumiere.colorNamesSorted.indexOf(s) !== -1) {
-              onlySpaces.push(s);
+          onlySpacesWorks = true;
+          _.each(
+            input
+              .trim()
+              .replace(/\W/g, ' ')
+              .toLowerCase()
+              .split(' '),
+            function(s, si) {
+              if (Meteor.lumiere.colorNamesSorted.indexOf(s) !== -1) {
+                onlySpaces.push(s);
+              }
+              else {
+                onlySpacesWorks = false;
+              }
             }
-            else {
-              onlySpacesWorks = false;
-            }
-          });
+          );
 
           // Check if the simple approach worked
           if (onlySpacesWorks) {
             input = onlySpaces.join(',');
           }
           else {
-            input = input.trim().replace(/\W/g, '').toLowerCase();
+            input = input
+              .trim()
+              .replace(/\W/g, '')
+              .toLowerCase();
             // Replace with indexes
             _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
               if (input.indexOf(c) !== -1) {
@@ -439,16 +482,21 @@ if (Meteor.isServer) {
             noCommas = input.split(',');
             // Put together with colors
             noCommas = _.map(noCommas, function(n, ni) {
-              return (n) ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
+              return n ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
             });
-            noCommas = _.filter(noCommas, function(n, ni) { return n; });
+            noCommas = _.filter(noCommas, function(n, ni) {
+              return n;
+            });
             input = noCommas.join(',');
           }
         }
 
         // Find colors from our input with commas
         _.each(input.trim().split(','), function(c) {
-          c = c.trim().replace(/\W/g, '').toLowerCase();
+          c = c
+            .trim()
+            .replace(/\W/g, '')
+            .toLowerCase();
           if (c.length > 0) {
             found = Meteor.call('findColor', c);
 
@@ -479,12 +527,14 @@ if (Meteor.isServer) {
 
       // Save colors to data-store.  Allow for arbitrary meta data
       saveColors: function(input, colors, meta) {
-        meta = (_.isObject(meta)) ? meta : {};
-        Colors.insert(_.extend(meta, {
-          timestamp: (new Date()).getTime(),
-          input: input,
-          colors: colors
-        }));
+        meta = _.isObject(meta) ? meta : {};
+        Colors.insert(
+          _.extend(meta, {
+            timestamp: new Date().getTime(),
+            input: input,
+            colors: colors
+          })
+        );
       },
 
       // Wrapper for make and save; this is what any input mechanisms
@@ -504,40 +554,54 @@ if (Meteor.isServer) {
   });
 }
 
-
 // Twitter streaming input handling
-if (_.isObject(Meteor.settings.twitterAuth) && Meteor.settings.public && Meteor.settings.public.twitterFilter) {
-  twitter.stream('filter', { track: Meteor.settings.public.twitterFilter }, function(stream) {
-    // Since we are out of the context of Meteor and Fiber, we have to wrap
-    // this.
-    stream.on('data', Meteor.bindEnvironment(function(data) {
-      var text;
+if (
+  _.isObject(Meteor.settings.twitterAuth) &&
+  Meteor.settings.public &&
+  Meteor.settings.public.twitterFilter
+) {
+  twitter.stream(
+    'filter',
+    { track: Meteor.settings.public.twitterFilter },
+    function(stream) {
+      // Since we are out of the context of Meteor and Fiber, we have to wrap
+      // this.
+      stream.on(
+        'data',
+        Meteor.bindEnvironment(function(data) {
+          var text;
 
-      // Data in, strip out non-word stuff and send through
-      if (_.isObject(data) && data.text) {
-        text = data.text.replace(/(#[A-Za-z0-9]+)|(@[A-Za-z0-9]+)|([^0-9A-Za-z, \t])|(\w+:\/\/\S+)/ig, ' ');
-        if (text.length > 2) {
-          Meteor.call('addColor', text, {
-            source: 'Twitter',
-            username: '@' + purify(data.user.screen_name)
-          });
-        }
-      }
-    }));
+          // Data in, strip out non-word stuff and send through
+          if (_.isObject(data) && data.text) {
+            text = data.text.replace(
+              /(#[A-Za-z0-9]+)|(@[A-Za-z0-9]+)|([^0-9A-Za-z, \t])|(\w+:\/\/\S+)/gi,
+              ' '
+            );
+            if (text.length > 2) {
+              Meteor.call('addColor', text, {
+                source: 'Twitter',
+                username: '@' + purify(data.user.screen_name)
+              });
+            }
+          }
+        })
+      );
 
-    // Handle error
-    stream.on('error', Meteor.bindEnvironment(function(error) {
-      if (error.source) {
-        console.error(error.source);
-      }
-      else {
-        console.error(error.stack);
-      }
-    }));
-
-  });
+      // Handle error
+      stream.on(
+        'error',
+        Meteor.bindEnvironment(function(error) {
+          if (error.source) {
+            console.error(error.source);
+          }
+          else {
+            console.error(error.stack);
+          }
+        })
+      );
+    }
+  );
 }
-
 
 // "API" routing
 
@@ -591,11 +655,21 @@ Router.route('incoming-twilio', {
     }
 
     // Return some TwiML
-    response = (updated) ? _.sample(responses) : 'We\'re sorry; we didn\'t recognize any of those colors. Try again; there are 1,000+ names of colors to choose from like "' + _.sample(Meteor.lumiere.colors).colorName + '".';
+    response = updated
+      ? _.sample(responses)
+      : 'We\'re sorry; we didn\'t recognize any of those colors. Try again; there are 1,000+ names of colors to choose from like "' +
+        _.sample(Meteor.lumiere.colors).colorName +
+        '".';
     this.response.writeHead(200, {
       'Content-Type': 'text/xml'
     });
-    this.response.end('<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' + response + ' -' + Meteor.settings.public.name + '</Sms> </Response>\n');
+    this.response.end(
+      '<?xml version="1.0" encoding="UTF-8" ?> <Response> <Sms> ' +
+        response +
+        ' -' +
+        Meteor.settings.public.name +
+        '</Sms> </Response>\n'
+    );
   }
 });
 
@@ -606,7 +680,9 @@ Router.route('incoming-yo', {
   where: 'server',
   action: function() {
     var thisRoute = this;
-    var username = (_.isObject(this.request.query)) ? purify(this.request.query.username) : false;
+    var username = _.isObject(this.request.query)
+      ? purify(this.request.query.username)
+      : false;
 
     // Just pick a random color
     Meteor.call('addColor', _.sample(Meteor.lumiere.colors).colorName, {
@@ -616,19 +692,74 @@ Router.route('incoming-yo', {
 
     if (_.isString(Meteor.settings.yoAuth)) {
       // Send Yo back
-      HTTP.post('http://api.justyo.co/yo/', {
-        data: {
-          api_token: Meteor.settings.yoAuth,
-          username: username,
-          link: 'http://lumiere.lighting'
+      HTTP.post(
+        'http://api.justyo.co/yo/',
+        {
+          data: {
+            api_token: Meteor.settings.yoAuth,
+            username: username,
+            link: 'http://lumiere.lighting'
+          }
+        },
+        function() {
+          thisRoute.response.end('Yo-ed');
         }
-      }, function() {
-        thisRoute.response.end('Yo-ed');
-      });
+      );
     }
     else {
       this.response.end('Yo-less');
     }
+  }
+});
+
+// Routing for text general text
+// curl --data "colors=red blue green" -X POST "http://localhost:3000/api/colors/text?source=Custom"
+// curl --data "" -X POST "http://localhost:3000/api/colors/text?source=Custom&random=true"
+Router.route('incoming-generic', {
+  path: '/api/colors/text',
+  where: 'server',
+  action: function() {
+    // Responses
+    var responses = [
+      'Thanks for your input; your color(s) should show up in a few seconds.',
+      'Yay! More colors! Might take a moment to update those colors for you.',
+      'Our robots are working hard to get those colors just right for you.',
+      'Wait for it... Bam! Colors!'
+    ];
+    var updated = false;
+    var random = _.sample(Meteor.lumiere.colors).colorName;
+    var response;
+
+    // Should return a TwiML document.
+    // https://www.twilio.com/docs/api/twiml
+    if (
+      (this.request.body && this.request.body.colors) ||
+      (this.request.query && this.request.query.random)
+    ) {
+      updated = Meteor.call('addColor', this.request.body.colors || random, {
+        source:
+          _.isObject(this.request.query) && this.request.query.source
+            ? purify(this.request.query.source)
+            : 'Unknown'
+      });
+    }
+
+    // Return some JSON
+    response = updated
+      ? {
+        error: false,
+        message: 'Updated colors',
+        response: _.sample(responses),
+        colors: Colors.find({}, { sort: { timestamp: -1 } }).fetch()[0]
+      }
+      : {
+        error: true,
+        message: updated === false ? 'No body or random' : updated
+      };
+    this.response.writeHead(200, {
+      'Content-Type': 'text/xml'
+    });
+    this.response.end(JSON.stringify(response));
   }
 });
 
@@ -638,7 +769,7 @@ Router.route('outgoing-colors', {
   where: 'server',
   action: function() {
     var thisRoute = this;
-    var color = Colors.find({}, { sort: { timestamp: -1 }}).fetch()[0];
+    var color = Colors.find({}, { sort: { timestamp: -1 } }).fetch()[0];
 
     // Output other formats such as hex, rgb, css
     if (_.isObject(this.params) && this.params.format) {
@@ -655,7 +786,9 @@ Router.route('outgoing-colors', {
     // easier processing
     if (_.isObject(this.params) && this.params.format === 'hex0') {
       color.colors = _.map(color.colors, function(c, ci) {
-        return chroma(c).hex().replace('#', '0x');
+        return chroma(c)
+          .hex()
+          .replace('#', '0x');
       });
     }
 
@@ -673,7 +806,6 @@ Router.route('outgoing-colors', {
       };
     }
 
-
     // Write out
     this.response.writeHead(200, {
       'Content-Type': 'application/json',
@@ -684,9 +816,6 @@ Router.route('outgoing-colors', {
   }
 });
 
-
-
-
 // Handle visual routes.  Set default template.
 Router.configure({
   layoutTemplate: 'layout'
@@ -695,7 +824,7 @@ Router.configure({
 // Router does not go back to top when switching pages, so this
 // hacks around it
 Router._filters = {
-  resetScroll: function () {
+  resetScroll: function() {
     var scrollTo = window.currentScroll || 0;
     $('html, body').animate({ scrollTop: scrollTo }, 300);
     $('body').css('min-height', 0);
@@ -712,11 +841,15 @@ Router.route('about', {
 });
 
 // About page
-Router.route('sign', {
-  path: '/sign'
-}, function() {
-  this.template('');
-});
+Router.route(
+  'sign',
+  {
+    path: '/sign'
+  },
+  function() {
+    this.template('');
+  }
+);
 
 // Default route is home
 Router.route('home', {
