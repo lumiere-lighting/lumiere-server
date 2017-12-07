@@ -1,0 +1,30 @@
+{
+  "name": "lumiere-server",
+  "version": "1.0.0",
+  "description": "[Lumière](http://lumiere.lighting) are colored lights all around the world (well, soon hopefully) that anyone can change through a web interface, texts/SMS, and possibly more.  Technically speaking it is an internet connected lighting system.",
+  "main": "lumiere.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lumiere-lighting/lumiere-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lumiere-lighting/lumiere-server/issues"
+  },
+  "homepage": "https://github.com/lumiere-lighting/lumiere-server#readme",
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "chroma-js": "^1.3.4",
+    "profanity-util": "^0.2.0",
+    "twilio": "^3.10.1",
+    "twitter": "^1.7.1"
+  }
+}
