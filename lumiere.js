@@ -716,6 +716,7 @@ Router.route('incoming-yo', {
 // Routing for text general text
 // curl --data "colors=red blue green" -X POST "http://localhost:3000/api/colors/text?source=Custom"
 // curl --data "" -X POST "http://localhost:3000/api/colors/text?source=Custom&random=true"
+// curl -X POST "http://localhost:3000/api/colors/text?source=Custom&colors=red,blue,green"
 Router.route('incoming-generic', {
   path: '/api/colors/text',
   where: 'server',
@@ -731,14 +732,19 @@ Router.route('incoming-generic', {
     var random = _.sample(Meteor.lumiere.colors).colorName;
     var response;
 
+    // Allow to use POST body, or GET query, or use random parameter
+    let colors =
+      this.request.body && this.request.body.colors
+        ? this.request.body.colors
+        : this.request.query && this.request.query.colors
+          ? this.request.query.colors
+          : this.request.query && this.request.query.random ? random : null;
+
     // Update
     debug('Incoming generic:', 'body', this.request.body);
     debug('Incoming generic:', 'query', this.request.query);
-    if (
-      (this.request.body && this.request.body.colors) ||
-      (this.request.query && this.request.query.random)
-    ) {
-      updated = Meteor.call('addColor', this.request.body.colors || random, {
+    if (colors) {
+      updated = Meteor.call('addColor', colors, {
         source:
           _.isObject(this.request.query) && this.request.query.source
             ? purify(this.request.query.source)
