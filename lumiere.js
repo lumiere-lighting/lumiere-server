@@ -334,11 +334,12 @@ if (Meteor.isClient) {
 // some methods that can be shared with the client
 if (Meteor.isServer) {
   // "npm" packages
-  chroma = Meteor.npmRequire('chroma-js');
-  profanity = Meteor.npmRequire('profanity-util');
+  debug = Npm.require('debug')('lumiere:server');
+  chroma = Npm.require('chroma-js');
+  profanity = Npm.require('profanity-util');
   // Profanity util has a good list of words, but does a stupid
   // regex when replacing (takes into account spacing)
-  profanityList = Meteor.npmRequire('profanity-util/lib/swearwords.json');
+  profanityList = Npm.require('profanity-util/lib/swearwords.json');
   profanityRegex = new RegExp('(' + profanityList.join('|') + ')', 'gi');
   purify = function(str) {
     return str.replace(profanityRegex, function(val) {
@@ -360,7 +361,7 @@ if (Meteor.isServer) {
 
   // Connect to twitter
   if (_.isObject(Meteor.settings.twitterAuth)) {
-    Twitter = Meteor.npmRequire('twitter');
+    Twitter = Npm.require('twitter');
     twitter = new Twitter(Meteor.settings.twitterAuth);
   }
 
@@ -730,8 +731,9 @@ Router.route('incoming-generic', {
     var random = _.sample(Meteor.lumiere.colors).colorName;
     var response;
 
-    // Should return a TwiML document.
-    // https://www.twilio.com/docs/api/twiml
+    // Update
+    debug('Incoming generic:', 'body', this.request.body);
+    debug('Incoming generic:', 'query', this.request.query);
     if (
       (this.request.body && this.request.body.colors) ||
       (this.request.query && this.request.query.random)

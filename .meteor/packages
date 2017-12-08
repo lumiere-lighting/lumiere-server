@@ -8,7 +8,6 @@ insecure@1.0.7
 jquery@1.11.10
 underscore@1.0.10
 iron:router
-meteorhacks:npm
 meteorhacks:fast-render
 
 
@@ -19,4 +18,3 @@ shell-server
 dynamic-import
 
 
-npm-container
