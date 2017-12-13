@@ -2,6 +2,8 @@
  * Main application logic for Lumiere Meteor app.
  */
 
+/* global _, Router, Meteor, UI, Template, Session, Npm $ */
+
 // Place hold some variables
 var chroma,
   Twitter,
@@ -10,7 +12,8 @@ var chroma,
   profanityList,
   profanityRegex,
   purify,
-  currentID;
+  currentID,
+  debug;
 
 // Persistant data stores
 var Colors = new Meteor.Collection('colors');
@@ -103,7 +106,7 @@ if (Meteor.isClient) {
 
       // Fill the lights
       recent = Meteor.lumiere.fillColor(recent);
-      length = recent.colors.length;
+      var length = recent.colors.length;
       recent.lightWidth = length === 0 ? 0 : 100 / length - 0.00001;
 
       // Some inputs are not worth showing
@@ -128,7 +131,7 @@ if (Meteor.isClient) {
 
         $(window).on(
           'scroll',
-          _.throttle(function(e) {
+          _.throttle(function() {
             var $container = $(container);
             var $canvas = $(canvas);
             var scrollTop = $(window).scrollTop();
@@ -179,7 +182,6 @@ if (Meteor.isClient) {
   Template.colorpicker.rendered = function() {
     var $picker = $('.color-picker');
     var $inputs = $('.color-inputs');
-    var defaultColor = '#1b26f7';
     var current = _.findWhere(Session.get('input'), { current: true });
 
     // Only do if not done
@@ -250,7 +252,7 @@ if (Meteor.isClient) {
       }
     },
     // Save color
-    'click .save-input': function(e) {
+    'click .save-input': function() {
       var inputs = Session.get('input');
       var current = _.findWhere(inputs, { current: true });
       var color = $('.color-picker')
@@ -269,7 +271,7 @@ if (Meteor.isClient) {
         'addColor',
         saveInput,
         { source: 'the Colorpicker' },
-        function(error, response) {
+        function(error) {
           if (error) {
             throw new error();
           }
@@ -291,8 +293,7 @@ if (Meteor.isClient) {
       // Save
       if (val) {
         Meteor.call('addColor', val, { source: 'the Web Text' }, function(
-          error,
-          response
+          error
         ) {
           if (error) {
             throw new error();
@@ -337,6 +338,7 @@ if (Meteor.isServer) {
   debug = Npm.require('debug')('lumiere:server');
   chroma = Npm.require('chroma-js');
   profanity = Npm.require('profanity-util');
+
   // Profanity util has a good list of words, but does a stupid
   // regex when replacing (takes into account spacing)
   profanityList = Npm.require('profanity-util/lib/swearwords.json');
@@ -431,72 +433,71 @@ if (Meteor.isServer) {
       makeColors: function(input) {
         var colors = [];
         var inputs = [];
-        var outputs = [];
         var noCommas = [];
-        var onlySpaces = [];
-        var found, onlySpacesWorks;
+        var found;
         input = input.trim();
 
-        // If no commas found, try to find words in the input and insert
-        // commas.
-        //
-        // There is also the issue of a single hex color
-        //
-        // First we see if we can find each color separated by a space,
-        // but if that doesn't work, the we try the more verbose way,
-        // which is to replace each color we find with its index and then
-        // put back together, using a list of colors ordered by length
-        if (input.indexOf(',') === -1 && input.indexOf('#') !== 0) {
-          // Try the simple approach
-          onlySpacesWorks = true;
-          _.each(
-            input
-              .trim()
-              .replace(/\W/g, ' ')
-              .toLowerCase()
-              .split(' '),
-            function(s, si) {
-              if (Meteor.lumiere.colorNamesSorted.indexOf(s) !== -1) {
-                onlySpaces.push(s);
-              }
-              else {
-                onlySpacesWorks = false;
-              }
-            }
-          );
+        // #123456
+        // #123456, #123902
+        // red
+        // red green
+        // red, green
+        // this is some red here and then blue here
+        // bright green and green
+        // bright, bright green and strawberry
 
-          // Check if the simple approach worked
-          if (onlySpacesWorks) {
-            input = onlySpaces.join(',');
-          }
-          else {
-            input = input
-              .trim()
-              .replace(/\W/g, '')
-              .toLowerCase();
-            // Replace with indexes
-            _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
-              if (input.indexOf(c) !== -1) {
-                input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
-              }
-            });
-            noCommas = input.split(',');
-            // Put together with colors
-            noCommas = _.map(noCommas, function(n, ni) {
-              return n ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
-            });
-            noCommas = _.filter(noCommas, function(n, ni) {
-              return n;
-            });
-            input = noCommas.join(',');
-          }
+        // Look for hex pattern
+        debug('Make colors input', input);
+        if (input.match(/^(#([0-9a-f]{3}|[0-9a-f]{6}),?\s?)+$/i)) {
+          // If comma, split on comma, otherwise, space
+          inputs = ~input.indexOf(',') ? input.split(',') : input.split(' ');
+          inputs = _.filter(
+            _.map(inputs, function(i) {
+              return i ? i.trim() : i;
+            }),
+            _.identity
+          );
+        }
+        else {
+          // Otherwise, we assume its text and (inefficiently) match each
+          // possible color name, assuming longest first.  Find each one, replace
+          // with index, then recombine
+          // Remove any non letter characters
+          input = input
+            .trim()
+            .replace(/\W/g, '')
+            .toLowerCase();
+
+          // Replace with indexes
+          debug('Make colors input', input);
+          _.each(Meteor.lumiere.colorNamesSorted, function(c, ci) {
+            if (input.indexOf(c) !== -1) {
+              input = input.replace(new RegExp(c, 'g'), ci.toString() + ',');
+            }
+          });
+
+          // Ignore any text that was not found
+          input = input.replace(/[^0-9,]/g, '');
+          debug('Indexed', input);
+          inputs = _.filter(input.split(','), _.identity);
+          debug('Indexed', inputs);
+
+          // Put together with colors
+          inputs = _.map(inputs, function(n) {
+            return n ? Meteor.lumiere.colorNamesSorted[parseInt(n, 10)] : '';
+          });
+          debug('Indexed', inputs);
+          inputs = _.filter(inputs, _.identity);
+          debug('Inputs', inputs);
+          input = inputs.join(',');
         }
 
         // Find colors from our input with commas
+        inputs = [];
         _.each(input.trim().split(','), function(c) {
           c = c
             .trim()
-            .replace(/\W/g, '')
+            .replace(/[^\w#]/g, '')
             .toLowerCase();
           if (c.length > 0) {
             found = Meteor.call('findColor', c);
@@ -520,6 +521,8 @@ if (Meteor.isServer) {
           colors = [];
         }
 
+        debug('Final colors', colors);
+        debug('Final inputs', colors);
         return {
           input: inputs.join(','),
           colors: colors
@@ -716,7 +719,7 @@ Router.route('incoming-yo', {
 // Routing for text general text
 // curl --data "colors=red blue green" -X POST "http://localhost:3000/api/colors/text?source=Custom"
 // curl --data "" -X POST "http://localhost:3000/api/colors/text?source=Custom&random=true"
-// curl -X POST "http://localhost:3000/api/colors/text?source=Custom&colors=red,blue,green"
+// curl "http://localhost:3000/api/colors/text?source=Custom&colors=red,blue,green"
 Router.route('incoming-generic', {
   path: '/api/colors/text',
   where: 'server',
@@ -762,7 +765,12 @@ Router.route('incoming-generic', {
       }
       : {
         error: true,
-        message: updated === false ? 'No body or random' : updated
+        message:
+            updated === false
+              ? 'No body provided or invalid color and random paramter not used'
+              : updated,
+        response:
+            'We are sorry but we are unaware of any color with that name, please try something else.'
       };
     this.response.writeHead(200, {
       'Content-Type': 'text/xml'
