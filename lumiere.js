@@ -565,8 +565,12 @@ if (
   Meteor.settings.public.twitterFilter
 ) {
   twitter.stream(
-    'filter',
-    { track: Meteor.settings.public.twitterFilter },
+    'statuses/filter',
+    {
+      track: _.isArray(Meteor.settings.public.twitterFilter)
+        ? Meteor.settings.public.twitterFilter.join(',')
+        : Meteor.settings.public.twitterFilter
+    },
     function(stream) {
       // Since we are out of the context of Meteor and Fiber, we have to wrap
       // this.
@@ -574,6 +578,7 @@ if (
         'data',
         Meteor.bindEnvironment(function(data) {
           var text;
+          debug(data);
 
           // Data in, strip out non-word stuff and send through
           if (_.isObject(data) && data.text) {
