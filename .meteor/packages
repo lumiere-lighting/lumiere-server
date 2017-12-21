@@ -12,9 +12,9 @@ meteorhacks:fast-render
 
 
 http@1.3.0
-standard-minifier-css
-standard-minifier-js
-shell-server
-dynamic-import
+standard-minifier-css@1.3.5
+standard-minifier-js@2.2.0
+shell-server@0.3.0
+dynamic-import@0.2.0
 
 
