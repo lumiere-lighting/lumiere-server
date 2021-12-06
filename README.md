@@ -1,3 +1,5 @@
+**DEPRECATED.  See `lumiere-api` and `lumiere-client-web` projects.**
+
 # Lumière (server)
 
 [Lumière](http://lumiere.lighting) are colored lights all around the world (well, soon hopefully) that anyone can change through a web interface, texts/SMS, and possibly more.  Technically speaking it is an internet connected lighting system.
